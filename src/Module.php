@@ -11,6 +11,11 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public $defaultRoute = 'key-value';
 
     /**
+     * @var null|string|array
+     */
+    public $apollo;
+
+    /**
      * {@inheritdoc}
      */
     public function bootstrap($app)

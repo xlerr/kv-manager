@@ -8,6 +8,20 @@ kv-manager
 'modules' => [
     'key-value' => [
         'class' => \kvmanager\Module::class,
+        /**
+         * null: 关闭同步
+         * string: 配置从KV读取
+         * array:
+         */
+        'appole' => [
+            'baseUri'    => 'http://domain.com/',
+            'token'      => 'security key',
+            'user'       => 'apollo',
+            'envs'       => 'DEV',
+            'apps'       => 'test',
+            'clusters'   => 'default', 
+            'namespaces' => '',
+        ],
     ],
 ],
 ```

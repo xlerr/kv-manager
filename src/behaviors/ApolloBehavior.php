@@ -4,6 +4,8 @@ namespace kvmanager\behaviors;
 
 use apollo\Apollo;
 use kvmanager\models\KeyValue;
+use kvmanager\Module;
+use Yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
@@ -28,21 +30,19 @@ class ApolloBehavior extends Behavior
     }
 
     /**
-     * @param string $method
+     * @param $method
      *
-     * @throws \yii\base\UserException
+     * @throws \Exception
      */
     private function syncToApollo($method)
     {
         /** @var KeyValue $model */
         $model = $this->owner;
 
-        // 这个配置不需要同步到Apollo
-        if ($model->key_value_key === 'apollo_config') {
+        $config = $this->getApolloConfig();
+        if (null === $config) {
             return;
         }
-
-        $config = KeyValue::getValue('apollo_config', true);
 
         $apollo = new Apollo($config->baseUri);
 
@@ -72,5 +72,40 @@ class ApolloBehavior extends Behavior
             date('Y-m-d H:i:s'),
         ]);
         $response = $apollo->releases($comment, $comment);
+    }
+
+    private function getApolloConfig()
+    {
+        $config = null;
+
+        $modules = Yii::$app->getModules(true);
+        foreach ($modules as $module) {
+            if ($module instanceof Module) {
+                /** @var Module $module */
+                /** @var null|string|array $config */
+                $config = $module->apollo;
+                break;
+            }
+        }
+
+        if (null === $config) {
+            return null;
+        }
+
+        if (is_string($config)) {
+            $config = KeyValue::getValueAsArray($config, true);
+        }
+
+        $config = array_merge([
+            'baseUri'    => null,
+            'token'      => null,
+            'user'       => null,
+            'envs'       => null,
+            'apps'       => null,
+            'clusters'   => 'default',
+            'namespaces' => 'application',
+        ], (array)$config);
+
+        return (object)$config;
     }
 }
