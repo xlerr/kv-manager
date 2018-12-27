@@ -93,6 +93,12 @@ class ApolloBehavior extends Behavior
         }
 
         if (is_string($config)) {
+            /** @var KeyValue $model */
+            $model = $this->owner;
+            if ($config === $model->key_value_key) {
+                // 编辑Apollo配置时不需要同步
+                return null;
+            }
             $config = KeyValue::getValueAsArray($config, true);
         }
 
