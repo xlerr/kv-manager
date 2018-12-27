@@ -1,0 +1,31 @@
+{
+  "name": "xlerr/kv-manager",
+  "type": "library",
+  "authors": [
+    {
+      "name": "xlerr",
+      "email": "xlerr@qq.com"
+    }
+  ],
+  "require": {
+    "ext-json": "*",
+    "xlerr/apollo": "^1.0",
+    "yiisoft/yii2": "^2.0",
+    "xlerr/yii2-widget-jsoneditor": "^1.0",
+    "danielstjules/stringy": "^3.1",
+    "kartik-v/yii2-widgets": "^3.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "kvmanager\\": "src/"
+    }
+  },
+  "require-dev": {
+    "yiisoft/yii2-debug": "~2.0.0"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "kvmanager\\test\\": "test/"
+    }
+  }
+}
