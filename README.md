@@ -4,7 +4,7 @@ kv-manager
 ### Example
 
 ```shell
-./yii migrate --migrationPath=@vendor/xlerr/kvmanager/migrations
+./yii migrate --migrationPath=@vendor/xlerr/kvmanager/src/migrations
 ```
 
 ```php
