@@ -3,6 +3,10 @@ kv-manager
 
 ### Example
 
+```shell
+./yii migrate --migrationPath=@vendor/xlerr/kvmanager/migrations
+```
+
 ```php
 'bootstrap' => ['key-value'], // 重写路由，主要用于兼容以前的地址
 'modules' => [
