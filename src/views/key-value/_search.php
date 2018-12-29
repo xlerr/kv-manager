@@ -1,7 +1,8 @@
 <?php
 
-use kartik\widgets\Select2;
 use kartik\widgets\ActiveForm;
+use kartik\widgets\Select2;
+use kvmanager\models\KeyValue;
 use yii\helpers\Html;
 
 /** @var $model \kvmanager\models\KeyValue */
@@ -21,7 +22,7 @@ use yii\helpers\Html;
 <?= $form->field($model, 'key_value_memo')->textInput() ?>
 
 <?= $form->field($model, 'key_value_status')->widget(Select2::class, [
-    'data'          => $model->getStatus(),
+    'data'          => KeyValue::STATUS_LIST,
     'theme'         => Select2::THEME_DEFAULT,
     'hideSearch'    => true,
     'pluginOptions' => [

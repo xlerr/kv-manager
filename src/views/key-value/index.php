@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
         [
             'attribute' => 'key_value_status',
             'value'     => function (KeyValue $model) {
-                return ArrayHelper::getValue($model->getStatus(), $model->key_value_status, '未知');
+                return ArrayHelper::getValue(KeyValue::STATUS_LIST, $model->key_value_status, '未知');
             },
         ],
         'key_value_create_at',

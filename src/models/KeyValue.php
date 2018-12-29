@@ -23,6 +23,10 @@ class KeyValue extends ActiveRecord
 {
     const STATUS_ACTIVE   = 'active';
     const STATUS_INACTIVE = 'inactive';
+    const STATUS_LIST     = [
+        self::STATUS_ACTIVE   => '激活',
+        self::STATUS_INACTIVE => '未激活',
+    ];
 
     public function transactions()
     {
@@ -81,14 +85,6 @@ class KeyValue extends ActiveRecord
         ];
     }
 
-    public function getStatus()
-    {
-        return [
-            self::STATUS_ACTIVE   => '激活',
-            self::STATUS_INACTIVE => '未激活',
-        ];
-    }
-
     /**
      * 获取格式化后的值
      *
@@ -97,7 +93,7 @@ class KeyValue extends ActiveRecord
     public function getFormattedValue()
     {
         $data = json_decode($this->key_value_value, true);
-        if ($data === null) {
+        if (null === $data || !is_array($data)) {
             // 兼容值为无效json的数据
             return $this->key_value_value;
         } else {
