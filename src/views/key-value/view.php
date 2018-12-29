@@ -1,10 +1,11 @@
 <?php
 
+use kvmanager\models\KeyValue;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\KeyValue */
+/* @var $model KeyValue */
 
 $this->title                   = $model->key_value_key;
 $this->params['breadcrumbs'][] = ['label' => 'Key Value', 'url' => ['index']];
@@ -51,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'key_value_memo:ntext',
                 [
                     'attribute' => 'key_value_status',
-                    'value'     => $model->getStatus()[$model->key_value_status],
+                    'value'     => KeyValue::STATUS_LIST[$model->key_value_status],
                 ],
                 'key_value_create_at',
                 'key_value_update_at',
