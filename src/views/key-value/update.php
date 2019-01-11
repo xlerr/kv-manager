@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\KeyValue */
+/* @var $model \kvmanager\models\KeyValue */
 
 $this->title = '更新:' . $model->key_value_key;
 $this->params['breadcrumbs'][] = ['label' => '配置列表', 'url' => ['index']];
@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = '更新';
 
 <div class="box box-primary">
     <div class="box-header with-border">
-        <div class="box-title"><?= Html::encode('更新')?></div>
+        <div class="box-title">更新</div>
     </div>
 
     <?= $this->render('_form', [

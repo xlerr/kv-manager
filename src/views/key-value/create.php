@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box box-primary">
     <div class="box-header with-border">
-        <div class="box-title"><?= Html::encode($this->title) ?></div>
+        <div class="box-title">创建</div>
     </div>
 
     <?= $this->render('_form', [

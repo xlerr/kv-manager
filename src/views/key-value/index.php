@@ -13,22 +13,16 @@ use yii\widgets\Pjax;
 
 $this->title                   = '配置列表';
 $this->params['breadcrumbs'][] = $this->title;
-?>
-    <div class="box box-default">
-        <div class="box-header with-border">
-            <div class="box-title">搜索条件
-                <i class="fa fa-arrow-circle-down text-danger"></i>
-            </div>
-        </div>
-        <div class="box-body">
-            <?= $this->render('_search', ['model' => $searchModel]); ?>
-        </div>
-    </div>
 
-<?php Pjax::begin([
+Pjax::begin([
     'timeout' => 10000,
-]) ?>
-<?= GridView::widget([
+]);
+
+echo $this->render('_search', [
+    'model' => $searchModel,
+]);
+
+echo GridView::widget([
     'tableOptions' => [
         'class' => 'table table-hover',
     ],
@@ -64,5 +58,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'key_value_create_at',
         'key_value_update_at',
     ],
-]); ?>
-<?php Pjax::end() ?>
+]);
+
+Pjax::end();

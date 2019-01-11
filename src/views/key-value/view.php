@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /* @var $model KeyValue */
 
 $this->title                   = $model->key_value_key;
-$this->params['breadcrumbs'][] = ['label' => 'Key Value', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => '配置列表', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -21,8 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'method'  => 'post',
         ],
     ]) ?>
-    <?= Html::a('继续添加', ['/key-value/create'], ['class' => 'btn btn-info']) ?>
-    <?= Html::a('返回列表', ['/key-value/index'], ['class' => 'btn btn-warning']) ?>
+    <?= Html::a('继续添加', ['create'], ['class' => 'btn btn-success']) ?>
+    <?= Html::a('返回列表', ['index'], ['class' => 'btn btn-default']) ?>
 </p>
 <div class="box box-primary">
     <div class="box-header with-border">
