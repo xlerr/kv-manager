@@ -1,6 +1,7 @@
 <?php
 
 use kvmanager\models\KeyValue;
+use xlerr\jsoneditor\JsonViewer;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -43,11 +44,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'captionOptions' => [
                         'style' => 'width: 10%',
                     ],
-                    'format'         => 'raw',
-                    'value'          => Html::textarea(null, $model->getFormattedValue(), [
-                        'style' => 'width: 100%; resize:none;',
-                        'rows'  => '10',
-                    ]),
+                    'format'         => function ($val) {
+                        return JsonViewer::widget([
+                            'value' => $val,
+                        ]);
+                    },
                 ],
                 'key_value_memo:ntext',
                 [
