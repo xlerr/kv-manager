@@ -29,3 +29,8 @@ kv-manager
     ],
 ],
 ```
+
+```php
+KeyValue::take('config_key')->item1->item2->value();
+Config::take('config_key')->item1->item2->value();
+```

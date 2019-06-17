@@ -27,6 +27,13 @@ class KeyValueCacheBehavior extends Behavior
     {
         /** @var KeyValue $model */
         $model = $this->owner;
-        Yii::$app->cache->delete(KeyValue::getCacheKey($model->key_value_key));
+
+        $cache = Yii::$app->getCache();
+        foreach (['getCacheKey', 'getCacheKeyOld'] as $method) {
+            if (method_exists(KeyValue::class, $method)) {
+                $cacheKey = call_user_func([KeyValue::class, $method], $model->key_value_key);
+                $cache->delete($cacheKey);
+            }
+        }
     }
 }
