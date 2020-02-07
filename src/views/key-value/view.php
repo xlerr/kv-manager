@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use kvmanager\models\KeyValue;
 use xlerr\jsoneditor\JsonViewer;
 use yii\helpers\Html;

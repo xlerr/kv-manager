@@ -1,9 +1,7 @@
 <?php
 
-use Yii;
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
+
 /* @var $model \kvmanager\models\KeyValue */
 
 $this->title                   = Yii::t('kvmanager', 'Create');

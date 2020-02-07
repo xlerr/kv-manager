@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use kartik\widgets\Select2;
 use kvmanager\models\KeyValue;
 use xlerr\jsoneditor\JsonEditor;

@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use kvmanager\models\KeyValue;
 use Stringy\StaticStringy;
 use yii\grid\GridView;

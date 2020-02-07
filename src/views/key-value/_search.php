@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\Select2;
 use kvmanager\models\KeyValue;
