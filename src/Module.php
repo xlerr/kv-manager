@@ -2,7 +2,9 @@
 
 namespace kvmanager;
 
+use Yii;
 use yii\base\BootstrapInterface;
+use yii\i18n\PhpMessageSource;
 
 class Module extends \yii\base\Module implements BootstrapInterface
 {
@@ -29,5 +31,16 @@ class Module extends \yii\base\Module implements BootstrapInterface
                 'suffix'  => false,
             ],
         ], false);
+    }
+
+    public function init()
+    {
+        if (!isset(Yii::$app->i18n->translations['kvmanager'])) {
+            Yii::$app->i18n->translations['kvmanager'] = [
+                'class'            => PhpMessageSource::class,
+                'forceTranslation' => true,
+                'basePath'         => '@vendor/xlerr/kvmanager/src/messages',
+            ];
+        }
     }
 }

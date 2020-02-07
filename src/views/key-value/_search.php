@@ -1,5 +1,6 @@
 <?php
 
+use Yii;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\Select2;
 use kvmanager\models\KeyValue;
@@ -11,7 +12,7 @@ use yii\helpers\Html;
 <div class="box box-default search">
     <div class="box-header with-border">
         <i class="glyphicon glyphicon-search"></i>
-        <h3 class="box-title">搜索</h3>
+        <h3 class="box-title"><?= Yii::t('kvmanager', 'Search') ?></h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
         </div>
@@ -30,7 +31,7 @@ use yii\helpers\Html;
         <?= $form->field($model, 'key_value_memo') ?>
 
         <?= $form->field($model, 'key_value_status')->widget(Select2::class, [
-            'data'          => KeyValue::STATUS_LIST,
+            'data'          => KeyValue::statusList(),
             'theme'         => Select2::THEME_DEFAULT,
             'hideSearch'    => true,
             'pluginOptions' => [
@@ -38,15 +39,15 @@ use yii\helpers\Html;
                 'width'      => '100px',
             ],
             'options'       => [
-                'placeholder' => '状态',
+                'placeholder' => $model->getAttribute('status'),
             ],
         ]) ?>
 
-        <?= Html::submitButton('搜索', ['class' => 'btn btn-primary']) ?>
+        <?= Html::submitButton(Yii::t('kvmanager', 'Search'), ['class' => 'btn btn-primary']) ?>
 
-        <?= Html::a('重置搜索条件', ['index'], ['class' => 'btn btn-default']); ?>
+        <?= Html::a(Yii::t('kvmanager', 'Reset'), ['index'], ['class' => 'btn btn-default']); ?>
 
-        <?= Html::a('创建', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('kvmanager', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
 
         <?php ActiveForm::end(); ?>
     </div>

@@ -1,5 +1,6 @@
 <?php
 
+use Yii;
 use kvmanager\models\KeyValue;
 use Stringy\StaticStringy;
 use yii\grid\GridView;
@@ -11,7 +12,7 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel KeyValue */
 
-$this->title                   = '配置列表';
+$this->title                   = Yii::t('kvmanager', 'Key Value');
 $this->params['breadcrumbs'][] = $this->title;
 
 Pjax::begin([
@@ -52,7 +53,7 @@ echo GridView::widget([
         [
             'attribute' => 'key_value_status',
             'value'     => function (KeyValue $model) {
-                return ArrayHelper::getValue(KeyValue::STATUS_LIST, $model->key_value_status, '未知');
+                return ArrayHelper::getValue(KeyValue::statusList(), $model->key_value_status);
             },
         ],
         'key_value_create_at',
