@@ -59,7 +59,7 @@ class KeyValue extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'key_value';
+        return '{{%key_value}}';
     }
 
     /**
