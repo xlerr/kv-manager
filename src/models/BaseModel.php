@@ -77,14 +77,14 @@ class BaseModel extends ActiveRecord
                 'tags' => sprintf('%s:%s', get_called_class(), $key),
             ]))
             ->where([
-                self::$keyFieldName    => $key,
-                self::$statusFieldName => self::STATUS_ACTIVE,
+                static::$keyFieldName    => $key,
+                static::$statusFieldName => static::STATUS_ACTIVE,
             ])
-            ->select(self::$valueFieldName)
+            ->select(static::$valueFieldName)
             ->scalar();
 
         if (false === $val) {
-            throw new KVException(sprintf('`%s` is not in \\%s', $key, self::class));
+            throw new KVException(sprintf('`%s` is not in \\%s', $key, static::class));
         }
         if ($format === self::TAKE_FORMAT_ARRAY) {
             return (array) json_decode($val, true);
