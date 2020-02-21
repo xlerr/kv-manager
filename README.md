@@ -31,6 +31,5 @@ kv-manager
 ```
 
 ```php
-KeyValue::take('config_key')->item1->item2->value();
-Config::take('config_key')->item1->item2->value();
+KeyValue::take('config_key', KeyValue::TAKE_FORMAT_ARRAY);
 ```
