@@ -13,7 +13,7 @@ use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use yii\di\Instance;
 
-class BaseModel extends ActiveRecord
+abstract class BaseModel extends ActiveRecord
 {
     /**
      * @var string
@@ -74,7 +74,7 @@ class BaseModel extends ActiveRecord
         $val = static::find()
             // 利用查询缓存
             ->cache(3600, new TagDependency([
-                'tags' => sprintf('%s:%s', get_called_class(), $key),
+                'tags' => sprintf('%s:%s', static::class, $key),
             ]))
             ->where([
                 static::$keyFieldName    => $key,
@@ -99,14 +99,15 @@ class BaseModel extends ActiveRecord
      * @param Event $event
      *
      * @throws InvalidConfigException
+     * @see CacheBehavior::events()
      */
     public function cleanCache(Event $event)
     {
-        /** @var static $sender */
+        /** @var BaseModel $sender */
         $sender = $event->sender;
 
         /** @var Cache $cache */
-        $cache = Instance::ensure(static::getDb()->queryCache, Cache::class);
+        $cache = Instance::ensure($sender::getDb()->queryCache, Cache::class);
 
         TagDependency::invalidate($cache, [
             sprintf('%s:%s', get_class($sender), $sender->getAttribute($sender::$keyFieldName)),
