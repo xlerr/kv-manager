@@ -16,15 +16,12 @@ class KeyValueSearch extends KeyValue
     public function rules()
     {
         return [
-            [['key_value_id'], 'integer'],
             [
                 [
                     'key_value_key',
                     'key_value_value',
                     'key_value_memo',
                     'key_value_status',
-                    'key_value_create_at',
-                    'key_value_update_at',
                 ],
                 'safe',
             ],
@@ -55,9 +52,10 @@ class KeyValueSearch extends KeyValue
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-//            'pagination' => [
-//                'pageSize' => 1,
-//            ]
+            'sort'  => [
+                'attributes'   => ['key_value_id'],
+                'defaultOrder' => ['key_value_id' => SORT_DESC],
+            ],
         ]);
 
         $this->load($params);
@@ -69,11 +67,10 @@ class KeyValueSearch extends KeyValue
         }
 
         // grid filtering conditions
-        $query->andFilterWhere(['key_value_id' => $this->key_value_id])
-            ->andFilterWhere(['like', 'key_value_key', $this->key_value_key])
+        $query->andFilterWhere(['like', 'key_value_key', $this->key_value_key])
             ->andFilterWhere(['like', 'key_value_value', $this->key_value_value])
             ->andFilterWhere(['like', 'key_value_memo', $this->key_value_memo])
-            ->andFilterWhere(['like', 'key_value_status', $this->key_value_status]);
+            ->andFilterWhere(['key_value_status' => $this->key_value_status]);
 
         return $dataProvider;
     }

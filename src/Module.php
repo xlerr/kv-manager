@@ -8,6 +8,8 @@ use yii\i18n\PhpMessageSource;
 
 class Module extends \yii\base\Module implements BootstrapInterface
 {
+    public $tableName = '{{%key_value}}';
+
     public $controllerNamespace = __NAMESPACE__ . '\controllers';
 
     public $defaultRoute = 'key-value';

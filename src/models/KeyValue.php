@@ -3,11 +3,9 @@
 namespace kvmanager\models;
 
 use kvmanager\behaviors\ApolloBehavior;
-use kvmanager\behaviors\KeyValueCacheBehavior;
-use kvmanager\ConfigTrait;
-use kvmanager\OldTrait;
+use kvmanager\KVOldTrait;
+use kvmanager\Module;
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "key_value".
@@ -20,38 +18,20 @@ use yii\db\ActiveRecord;
  * @property string  $key_value_create_at
  * @property string  $key_value_update_at
  */
-class KeyValue extends ActiveRecord
+class KeyValue extends BaseModel
 {
-    use ConfigTrait;
-    use OldTrait;
+    use KVOldTrait;
 
-    const STATUS_ACTIVE   = 'active';
-    const STATUS_INACTIVE = 'inactive';
-
-    public static function statusList()
-    {
-        return [
-            self::STATUS_ACTIVE   => Yii::t('kvmanager', 'Active'),
-            self::STATUS_INACTIVE => Yii::t('kvmanager', 'Inactive'),
-        ];
-    }
-
-    public function transactions()
-    {
-        return [
-            self::SCENARIO_DEFAULT => self::OP_ALL,
-        ];
-    }
+    public static $keyFieldName = 'key_value_key';
+    public static $valueFieldName = 'key_value_value';
+    public static $statusFieldName = 'key_value_status';
 
     public function behaviors()
     {
-        return [
+        return array_merge(parent::behaviors(), [
             // 同步到配置中心
             ApolloBehavior::class,
-
-            // 缓存
-            KeyValueCacheBehavior::class,
-        ];
+        ]);
     }
 
     /**
@@ -59,7 +39,17 @@ class KeyValue extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%key_value}}';
+        static $tableName = null;
+        if (null === $tableName) {
+            $modules = Yii::$app->getModules();
+            foreach ($modules as $id => $module) {
+                if ($module instanceof Module) {
+                    $tableName = $module->tableName;
+                }
+            }
+        }
+
+        return $tableName;
     }
 
     /**
