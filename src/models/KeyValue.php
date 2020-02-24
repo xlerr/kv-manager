@@ -4,8 +4,8 @@ namespace kvmanager\models;
 
 use kvmanager\behaviors\ApolloBehavior;
 use kvmanager\KVOldTrait;
-use kvmanager\Module;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "key_value".
@@ -39,17 +39,7 @@ class KeyValue extends BaseModel
      */
     public static function tableName()
     {
-        static $tableName = null;
-        if (null === $tableName) {
-            $modules = Yii::$app->getModules();
-            foreach ($modules as $id => $module) {
-                if ($module instanceof Module) {
-                    $tableName = $module->tableName;
-                }
-            }
-        }
-
-        return $tableName;
+        return ArrayHelper::getValue(Yii::$app->params, 'kvmanager.tableName', '{{%key_value}}');
     }
 
     /**

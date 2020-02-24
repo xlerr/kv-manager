@@ -7,7 +7,6 @@ use kvmanager\KVException;
 use Yii;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
-use yii\base\UserException;
 use yii\caching\Cache;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
