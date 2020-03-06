@@ -70,20 +70,26 @@ abstract class BaseModel extends ActiveRecord
      */
     public static function take($key, $format = self::TAKE_FORMAT_ARRAY)
     {
-        $val = static::find()
-            // 利用查询缓存
-            ->cache(3600, new TagDependency([
-                'tags' => sprintf('%s:%s', static::class, $key),
-            ]))
-            ->where([
-                static::$keyFieldName    => $key,
-                static::$statusFieldName => static::STATUS_ACTIVE,
-            ])
-            ->select(static::$valueFieldName)
-            ->scalar();
+        static $cache = [];
+        if (isset($cache[static::class][$key])) {
+            $val = $cache[static::class][$key];
+        } else {
+            $val = static::find()
+                // 利用查询缓存
+                ->cache(3600, new TagDependency([
+                    'tags' => sprintf('%s:%s', static::class, $key),
+                ]))
+                ->where([
+                    static::$keyFieldName    => $key,
+                    static::$statusFieldName => static::STATUS_ACTIVE,
+                ])
+                ->select(static::$valueFieldName)
+                ->scalar();
 
-        if (false === $val) {
-            throw new KVException(sprintf('`%s` is not in \\%s', $key, static::class));
+            if (false === $val) {
+                throw new KVException(sprintf('`%s` is not in \\%s', $key, static::class));
+            }
+            $cache[static::class][$key] = $val;
         }
         if ($format === self::TAKE_FORMAT_ARRAY) {
             return (array) json_decode($val, true);
