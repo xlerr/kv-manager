@@ -42,6 +42,7 @@ class KeyValueController extends Controller
     {
         $model = $this->findModel($id);
         $model->pullConfig();
+        Yii::$app->getSession()->setFlash('success', '同步成功!');
 
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }
