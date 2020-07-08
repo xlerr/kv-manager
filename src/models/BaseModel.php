@@ -4,6 +4,7 @@ namespace kvmanager\models;
 
 use kvmanager\behaviors\CacheBehavior;
 use kvmanager\KVException;
+use Symfony\Component\Yaml\Yaml;
 use Yii;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
@@ -17,20 +18,27 @@ abstract class BaseModel extends ActiveRecord
     /**
      * @var string
      */
+    public static $namespaceFieldName;
+
+    /**
+     * @var string
+     */
+    public static $groupFieldName;
+
+    /**
+     * @var string
+     */
     public static $keyFieldName;
 
     /**
      * @var string
      */
-    public static $valueFieldName;
+    public static $typeFieldName;
 
     /**
      * @var string
      */
-    public static $statusFieldName;
-
-    const STATUS_ACTIVE   = 'active';
-    const STATUS_INACTIVE = 'inactive';
+    public static $valueFieldName;
 
     const TAKE_FORMAT_ARRAY  = 'array';
     const TAKE_FORMAT_OBJECT = 'object';
@@ -51,47 +59,98 @@ abstract class BaseModel extends ActiveRecord
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public static function statusList()
+    public static function getDefaultNamespace(): string
     {
-        return [
-            self::STATUS_ACTIVE   => Yii::t('kvmanager', 'Active'),
-            self::STATUS_INACTIVE => Yii::t('kvmanager', 'Inactive'),
-        ];
+        return Yii::$app->params['kvmanager']['defaultNamespace'] ?? 'portal';
     }
 
     /**
-     * @param string $key
-     * @param string $format
+     * @return string
+     */
+    public static function getDefaultGroup(): string
+    {
+        return Yii::$app->params['kvmanager']['defaultGroup'] ?? 'default';
+    }
+
+    /**
+     * @param array|string $key
+     * @param string       $format
      *
      * @return array|object|string
      * @throws KVException
      */
     public static function take($key, $format = self::TAKE_FORMAT_ARRAY)
     {
-        $val = static::find()
-            // 利用查询缓存
-            ->cache(3600, new TagDependency([
-                'tags' => sprintf('%s:%s', static::class, $key),
-            ]))
-            ->where([
-                static::$keyFieldName    => $key,
-                static::$statusFieldName => static::STATUS_ACTIVE,
-            ])
-            ->select(static::$valueFieldName)
-            ->scalar();
+        static $cache = [];
+        [$namespace, $group, $key] = self::parseKey($key);
+        if (isset($cache[static::class][$namespace][$group][$key])) {
+            $config = $cache[static::class][$namespace][$group][$key];
+        } else {
+            $config = static::find()
+                // 利用查询缓存
+                ->cache(3600, new TagDependency([
+                    'tags' => sprintf('%s:%s', static::class, $key),
+                ]))
+                ->where([
+                    static::$namespaceFieldName => $namespace,
+                    static::$groupFieldName     => $group,
+                    static::$keyFieldName       => $key,
+                ])
+                ->select([
+                    'value' => static::$valueFieldName,
+                    'type'  => static::$typeFieldName,
+                ])
+                ->asArray()
+                ->one();
 
-        if (false === $val) {
-            throw new KVException(sprintf('`%s` is not in \\%s', $key, static::class));
+            if (null === $config) {
+                throw new KVException(sprintf('`%s.%s.%s` is not in \\%s', $namespace, $group, $key, static::class));
+            }
+            $cache[static::class][$namespace][$group][$key] = $config;
         }
+
+        if ($format === self::TAKE_FORMAT_RAW) {
+            return $config['value'];
+        }
+
+        if ($config['type'] === 'json') {
+            $config['value'] = json_decode($config['value'], true);
+        } elseif ($config['type'] === 'yaml') {
+            $config['value'] = Yaml::parse($config['value']);
+        } else {
+            throw new KVException(sprintf('不支持解析[%s]格式内容', $config['type']));
+        }
+
         if ($format === self::TAKE_FORMAT_ARRAY) {
-            return (array) json_decode($val, true);
+            return (array)$config['value'];
         } elseif ($format === self::TAKE_FORMAT_OBJECT) {
-            return (object) json_decode($val);
+            return (object)$config['value'];
         }
 
-        return $val;
+        throw new KVException('返回值格式异常: ' . $format);
+    }
+
+    /**
+     * @param array|string $key
+     *
+     * @return array [namespace, group, key]
+     */
+    protected static function parseKey($key)
+    {
+        if (is_string($key)) {
+            $key = explode('.', $key, 3);
+        }
+
+        switch (count($key)) {
+            case 1:
+                array_unshift($key, self::getDefaultGroup());
+            case 2;
+                array_unshift($key, self::getDefaultNamespace());
+        }
+
+        return $key;
     }
 
     /**

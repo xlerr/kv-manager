@@ -10,23 +10,16 @@ kv-manager
 ```php
 'bootstrap' => ['key-value'], // 重写路由，主要用于兼容以前的地址
 'modules' => [
-    'key-value' => [
-        'class' => \kvmanager\Module::class,
-        /**
-         * null: 关闭同步
-         * string: 配置从KV读取
-         * array:
-         */
-        'appole' => [
-            'baseUri'    => 'http://domain.com/',
-            'token'      => 'security key',
-            'user'       => 'apollo',
-            'envs'       => 'DEV',
-            'apps'       => 'test',
-            'clusters'   => 'default', 
-            'namespaces' => '',
-        ],
-    ],
+    'key-value' => \kvmanager\Module::class,
+],
+'components' => [
+    NacosComponent::componentName() => function () {
+        $config = KeyValue::take(NacosComponent::CONFIG_KEY);
+
+        return new NacosComponent([
+            'baseUri' => $config['baseUri'] ?? null,
+        ]);
+    },
 ],
 ```
 

@@ -21,6 +21,7 @@ class KeyValueController extends Controller
                 'class'   => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
+                    'sync'   => ['POST'],
                 ],
             ],
         ];
@@ -37,6 +38,14 @@ class KeyValueController extends Controller
         ]);
     }
 
+    public function actionSync($id)
+    {
+        $model = $this->findModel($id);
+        $model->pullConfig();
+
+        return $this->redirect(Yii::$app->getRequest()->getReferrer());
+    }
+
     public function actionView($id)
     {
         return $this->render('view', [
@@ -48,9 +57,17 @@ class KeyValueController extends Controller
     {
         $model = new KeyValue();
 
+        $model->key_value_namespace = Yii::$app->getRequest()->get('key_value_namespace');
+        $model->key_value_group     = Yii::$app->getRequest()->get('key_value_group');
+
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->key_value_id]);
+                return $this->redirect([
+                    'view',
+                    'key_value_namespace' => $model->key_value_namespace,
+                    'key_value_group'     => $model->key_value_group,
+                    'id'                  => $model->key_value_id,
+                ]);
             }
         }
 
@@ -64,7 +81,12 @@ class KeyValueController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->key_value_id]);
+            return $this->redirect([
+                'view',
+                'key_value_namespace' => $model->key_value_namespace,
+                'key_value_group'     => $model->key_value_group,
+                'id'                  => $model->key_value_id,
+            ]);
         } else {
             return $this->render('update', [
                 'model' => $model,

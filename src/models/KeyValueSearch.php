@@ -2,7 +2,6 @@
 
 namespace kvmanager\models;
 
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -18,10 +17,11 @@ class KeyValueSearch extends KeyValue
         return [
             [
                 [
+                    self::$namespaceFieldName,
+                    self::$groupFieldName,
                     'key_value_key',
                     'key_value_value',
                     'key_value_memo',
-                    'key_value_status',
                 ],
                 'safe',
             ],
@@ -31,10 +31,9 @@ class KeyValueSearch extends KeyValue
     /**
      * @inheritdoc
      */
-    public function scenarios()
+    public function formName()
     {
-        // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+        return '';
     }
 
     /**
@@ -67,10 +66,14 @@ class KeyValueSearch extends KeyValue
         }
 
         // grid filtering conditions
-        $query->andFilterWhere(['like', 'key_value_key', $this->key_value_key])
+        $query
+            ->andWhere([
+                'key_value_namespace' => $this->key_value_namespace,
+                'key_value_group'     => $this->key_value_group,
+            ])
+            ->andFilterWhere(['like', 'key_value_key', $this->key_value_key])
             ->andFilterWhere(['like', 'key_value_value', $this->key_value_value])
-            ->andFilterWhere(['like', 'key_value_memo', $this->key_value_memo])
-            ->andFilterWhere(['key_value_status' => $this->key_value_status]);
+            ->andFilterWhere(['like', 'key_value_memo', $this->key_value_memo]);
 
         return $dataProvider;
     }

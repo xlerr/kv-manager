@@ -1,11 +1,10 @@
 <?php
 
 use kartik\widgets\ActiveForm;
-use kartik\widgets\Select2;
 use kvmanager\models\KeyValue;
 use yii\helpers\Html;
 
-/** @var $model \kvmanager\models\KeyValue */
+/** @var $model KeyValue */
 ?>
 
 <div class="box box-default search">
@@ -18,7 +17,11 @@ use yii\helpers\Html;
     </div>
     <div class="box-body">
         <?php $form = ActiveForm::begin([
-            'action' => ['index'],
+            'action' => [
+                'index',
+                'key_value_namespace' => $model->key_value_namespace,
+                'key_value_group'     => $model->key_value_group,
+            ],
             'method' => 'get',
             'type'   => ActiveForm::TYPE_INLINE,
         ]); ?>
@@ -29,24 +32,19 @@ use yii\helpers\Html;
 
         <?= $form->field($model, 'key_value_memo') ?>
 
-        <?= $form->field($model, 'key_value_status')->widget(Select2::class, [
-            'data'          => KeyValue::statusList(),
-            'theme'         => Select2::THEME_DEFAULT,
-            'hideSearch'    => true,
-            'pluginOptions' => [
-                'allowClear' => true,
-                'width'      => '100px',
-            ],
-            'options'       => [
-                'placeholder' => $model->getAttribute('status'),
-            ],
-        ]) ?>
-
         <?= Html::submitButton(Yii::t('kvmanager', 'Search'), ['class' => 'btn btn-primary']) ?>
 
-        <?= Html::a(Yii::t('kvmanager', 'Reset'), ['index'], ['class' => 'btn btn-default']); ?>
+        <?= Html::a(Yii::t('kvmanager', 'Reset'), [
+            'index',
+            'key_value_namespace' => $model->key_value_namespace,
+            'key_value_group'     => $model->key_value_group,
+        ], ['class' => 'btn btn-default']); ?>
 
-        <?= Html::a(Yii::t('kvmanager', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('kvmanager', 'Create'), [
+            'create',
+            'key_value_namespace' => $model->key_value_namespace,
+            'key_value_group'     => $model->key_value_group,
+        ], ['class' => 'btn btn-success']) ?>
 
         <?php ActiveForm::end(); ?>
     </div>

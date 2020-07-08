@@ -5,19 +5,13 @@ namespace kvmanager;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
+use yii\web\UrlRule;
 
 class Module extends \yii\base\Module implements BootstrapInterface
 {
-    public $tableName = '{{%key_value}}';
-
     public $controllerNamespace = __NAMESPACE__ . '\controllers';
 
     public $defaultRoute = 'key-value';
-
-    /**
-     * @var null|string|array
-     */
-    public $apollo;
 
     /**
      * {@inheritdoc}
@@ -27,10 +21,14 @@ class Module extends \yii\base\Module implements BootstrapInterface
         /** @var $app \yii\web\Application */
         $app->getUrlManager()->addRules([
             [
-                'class'   => 'yii\web\UrlRule',
+                'class'   => UrlRule::class,
+                'route'   => $this->id . '/key-value/index',
+                'pattern' => $this->id . '/<key_value_namespace:[\w\-]+>/<key_value_group:[\w\-]+>',
+            ],
+            [
+                'class'   => UrlRule::class,
                 'route'   => $this->id . '/key-value/<action>',
-                'pattern' => $this->id . '/<action:[\w\-]+>',
-                'suffix'  => false,
+                'pattern' => $this->id . '/<key_value_namespace:[\w\-]+>/<key_value_group:[\w\-]+>/<action:(create|update|delete|view|sync)>',
             ],
         ], false);
     }
