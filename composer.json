@@ -1,0 +1,37 @@
+{
+  "name": "xlerr/kvmanager",
+  "type": "library",
+  "authors": [
+    {
+      "name": "xlerr",
+      "email": "xlerr@qq.com"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=7.1",
+    "ext-json": "*",
+    "xlerr/yii2-common-widgets": "^1.5",
+    "xlerr/httpca": ">=1.1.0",
+    "xlerr/yii2-widget-code-editor": "^1.0",
+    "symfony/yaml": ">=2.7 <6.0",
+    "yiisoft/yii2": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "kvmanager\\": "src/"
+    }
+  },
+  "require-dev": {
+    "yiisoft/yii2-debug": "~2.0.0"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "kvmanager\\test\\": "test/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  }
+}
