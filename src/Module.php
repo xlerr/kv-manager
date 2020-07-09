@@ -28,7 +28,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
             [
                 'class'   => UrlRule::class,
                 'route'   => $this->id . '/key-value/<action>',
-                'pattern' => $this->id . '/<key_value_namespace:[\w\-]+>/<key_value_group:[\w\-]+>/<action:(create|update|delete|view|sync)>',
+                'pattern' => $this->id . '/<key_value_namespace:[\w\-]+>/<key_value_group:[\w\-]+>/<action:(create|update|delete|view|sync|clean-cache)>',
             ],
         ], false);
     }

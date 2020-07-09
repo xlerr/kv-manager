@@ -6,8 +6,6 @@ use kvmanager\behaviors\CacheBehavior;
 use kvmanager\KVException;
 use Symfony\Component\Yaml\Yaml;
 use Yii;
-use yii\base\Event;
-use yii\base\InvalidConfigException;
 use yii\caching\Cache;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -91,7 +89,7 @@ abstract class BaseModel extends ActiveRecord
             $config = static::find()
                 // 利用查询缓存
                 ->cache(3600, new TagDependency([
-                    'tags' => sprintf('%s:%s', static::class, $key),
+                    'tags' => sprintf('%s:%s:%s:%s', static::class, $namespace, $group, $key),
                 ]))
                 ->where([
                     static::$namespaceFieldName => $namespace,
@@ -154,21 +152,20 @@ abstract class BaseModel extends ActiveRecord
     }
 
     /**
-     * @param Event $event
-     *
-     * @throws InvalidConfigException
-     * @see CacheBehavior::events()
+     * @throws \yii\base\InvalidConfigException
      */
-    public function cleanCache(Event $event)
+    public function cleanCache()
     {
-        /** @var BaseModel $sender */
-        $sender = $event->sender;
-
         /** @var Cache $cache */
-        $cache = Instance::ensure($sender::getDb()->queryCache, Cache::class);
+        $cache = Instance::ensure(static::getDb()->queryCache, Cache::class);
 
         TagDependency::invalidate($cache, [
-            sprintf('%s:%s', get_class($sender), $sender->getAttribute($sender::$keyFieldName)),
+            vsprintf('%s:%s:%s:%s', [
+                get_class($this),
+                $this->getAttribute(static::$namespaceFieldName),
+                $this->getAttribute(static::$groupFieldName),
+                $this->getAttribute(static::$keyFieldName),
+            ]),
         ]);
     }
 }

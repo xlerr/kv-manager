@@ -25,6 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <p>
+    <?= Html::a(Yii::t('kvmanager', 'Clean Cache'), [
+        'clean-cache',
+        'key_value_namespace' => $model->key_value_namespace,
+        'key_value_group'     => $model->key_value_group,
+        'id'                  => $model->key_value_id,
+    ], ['class' => 'btn btn-warning']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), [
         'update',
         'key_value_namespace' => $model->key_value_namespace,

@@ -101,7 +101,14 @@ class KeyValueController extends Controller
 
         $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(Yii::$app->getRequest()->getReferrer());
+    }
+
+    public function actionCleanCache($id)
+    {
+        $this->findModel($id)->cleanCache();
+
+        return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }
 
     protected function findModel($id)
