@@ -46,7 +46,10 @@ class KeyValue extends BaseModel
         } catch (KVException $e) {
         }
 
-        return ['text' => 'TEXT'] + ($config['types'] ?? []);
+        return [
+                'text' => 'TEXT',
+                'json' => 'JSON',
+            ] + ($config['types'] ?? []);
     }
 
     public static function getEditorModes()
@@ -56,7 +59,10 @@ class KeyValue extends BaseModel
         } catch (KVException $e) {
         }
 
-        return ['text' => CodeEditor::MODE_Text] + ($config['modes'] ?? []);
+        return [
+                'text' => CodeEditor::MODE_Text,
+                'json' => CodeEditor::MODE_JSON,
+            ] + ($config['modes'] ?? []);
     }
 
     public function getEditorMode()
