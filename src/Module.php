@@ -2,9 +2,11 @@
 
 namespace kvmanager;
 
+use kvmanager\models\KeyValue;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
+use yii\web\Application;
 use yii\web\UrlRule;
 
 class Module extends \yii\base\Module implements BootstrapInterface
@@ -18,17 +20,33 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public function bootstrap($app)
     {
-        /** @var $app \yii\web\Application */
+        /** @var $app Application */
         $app->getUrlManager()->addRules([
             [
                 'class'   => UrlRule::class,
                 'route'   => $this->id . '/key-value/index',
-                'pattern' => $this->id . '/<key_value_namespace:[\w\-]+>/<key_value_group:[\w\-]+>',
+                'pattern' => vsprintf('%s/<%s:[\w\-]+>/<%s:[\w\-]+>', [
+                    $this->id,
+                    KeyValue::$namespaceFieldName,
+                    KeyValue::$groupFieldName,
+                ]),
             ],
             [
                 'class'   => UrlRule::class,
                 'route'   => $this->id . '/key-value/<action>',
-                'pattern' => $this->id . '/<key_value_namespace:[\w\-]+>/<key_value_group:[\w\-]+>/<action:(create|update|delete|view|sync|clean-cache)>',
+                'pattern' => vsprintf('%s/<%s:[\w\-]+>/<%s:[\w\-]+>/<action:(%s)>', [
+                    $this->id,
+                    KeyValue::$namespaceFieldName,
+                    KeyValue::$groupFieldName,
+                    implode('|', [
+                        'create',
+                        'update',
+                        'delete',
+                        'view',
+                        'sync',
+                        'clean-cache',
+                    ]),
+                ]),
             ],
         ], false);
     }

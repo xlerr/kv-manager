@@ -14,8 +14,8 @@ use yii\web\View;
 $this->title = Yii::t('kvmanager', 'Key Value');
 
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['breadcrumbs'][] = $searchModel->key_value_namespace;
-$this->params['breadcrumbs'][] = $searchModel->key_value_group;
+$this->params['breadcrumbs'][] = $searchModel->namespace;
+$this->params['breadcrumbs'][] = $searchModel->group;
 
 echo $this->render('_search', [
     'model' => $searchModel,
@@ -38,47 +38,35 @@ echo GridView::widget([
     'columns'      => [
         [
             'class'          => 'yii\grid\ActionColumn',
-            'template'       => '{sync} {view} {update} {delete}',
+            'template'       => '{view} {update} {delete}',
             'visibleButtons' => [
                 'sync' => function (KeyValue $model) {
                     return Yii::$app->getUser()->can('KV_SYNC');
                 },
             ],
             'buttons'        => [
-                'sync'   => function ($url, KeyValue $model) {
-                    return Html::a(Yii::t('kvmanager', 'Sync'), [
-                        'sync',
-                        'key_value_namespace' => $model->key_value_namespace,
-                        'key_value_group'     => $model->key_value_group,
-                        'id'                  => $model->key_value_id,
-                    ], [
-                        'data' => [
-                            'method' => 'post',
-                        ],
-                    ]);
-                },
                 'view'   => function ($url, KeyValue $model) {
                     return Html::a(Yii::t('kvmanager', 'View'), [
                         'view',
-                        'key_value_namespace' => $model->key_value_namespace,
-                        'key_value_group'     => $model->key_value_group,
-                        'id'                  => $model->key_value_id,
+                        'namespace' => $model->namespace,
+                        'group'     => $model->group,
+                        'id'        => $model->id,
                     ]);
                 },
                 'update' => function ($url, KeyValue $model) {
                     return Html::a(Yii::t('kvmanager', 'Update'), [
                         'update',
-                        'key_value_namespace' => $model->key_value_namespace,
-                        'key_value_group'     => $model->key_value_group,
-                        'id'                  => $model->key_value_id,
+                        'namespace' => $model->namespace,
+                        'group'     => $model->group,
+                        'id'        => $model->id,
                     ]);
                 },
                 'delete' => function ($url, KeyValue $model) {
                     return Html::a(Yii::t('kvmanager', 'Delete'), [
                         'delete',
-                        'key_value_namespace' => $model->key_value_namespace,
-                        'key_value_group'     => $model->key_value_group,
-                        'id'                  => $model->key_value_id,
+                        'namespace' => $model->namespace,
+                        'group'     => $model->group,
+                        'id'        => $model->id,
                     ], [
                         'data' => [
                             'method'  => 'post',
@@ -88,25 +76,30 @@ echo GridView::widget([
                 },
             ],
         ],
-        'key_value_key',
+        'key',
         [
-            'attribute' => 'key_value_type',
+            'attribute' => 'type',
             'format'    => ['in', KeyValue::typeList()],
         ],
+        'namespace',
+        'group',
         [
-            'attribute' => 'key_value_value',
+            'attribute' => 'value',
             'format'    => 'raw',
             'value'     => function (KeyValue $model) {
-                $content = preg_replace('/\s+/', '', $model->key_value_value);
+                $content = preg_replace('/\s+/', '', $model->value);
                 $content = htmlentities(StringHelper::truncate($content, 30));
 
                 return Html::tag('span', $content, [
-                    'title' => $model->key_value_value,
+                    'title' => $model->value,
                 ]);
             },
         ],
-        'key_value_memo:ntext',
-        'key_value_create_at',
-        'key_value_update_at',
+        'memo:ntext',
+        [
+            'label'     => '修改者',
+            'attribute' => 'operator.username',
+        ],
+        'updated_at',
     ],
 ]);

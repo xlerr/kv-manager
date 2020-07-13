@@ -19,9 +19,9 @@ class KeyValueSearch extends KeyValue
                 [
                     self::$namespaceFieldName,
                     self::$groupFieldName,
-                    'key_value_key',
-                    'key_value_value',
-                    'key_value_memo',
+                    self::$keyFieldName,
+                    'value',
+                    'memo',
                 ],
                 'safe',
             ],
@@ -52,8 +52,8 @@ class KeyValueSearch extends KeyValue
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'  => [
-                'attributes'   => ['key_value_id'],
-                'defaultOrder' => ['key_value_id' => SORT_DESC],
+                'attributes'   => ['id'],
+                'defaultOrder' => ['id' => SORT_DESC],
             ],
         ]);
 
@@ -68,12 +68,12 @@ class KeyValueSearch extends KeyValue
         // grid filtering conditions
         $query
             ->andWhere([
-                'key_value_namespace' => $this->key_value_namespace,
-                'key_value_group'     => $this->key_value_group,
+                'namespace' => $this->namespace,
+                'group'     => $this->group,
             ])
-            ->andFilterWhere(['like', 'key_value_key', $this->key_value_key])
-            ->andFilterWhere(['like', 'key_value_value', $this->key_value_value])
-            ->andFilterWhere(['like', 'key_value_memo', $this->key_value_memo]);
+            ->andFilterWhere(['like', 'key', $this->key])
+            ->andFilterWhere(['like', 'value', $this->value])
+            ->andFilterWhere(['like', 'memo', $this->memo]);
 
         return $dataProvider;
     }

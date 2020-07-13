@@ -1,6 +1,7 @@
 {
   "name": "xlerr/kvmanager",
   "type": "library",
+  "version": "3.0.5",
   "authors": [
     {
       "name": "xlerr",

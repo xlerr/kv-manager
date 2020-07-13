@@ -16,22 +16,22 @@ use yii\web\View;
 <?php $form = ActiveForm::begin([
     'action' => [
         '',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
-        'id'                  => $model->key_value_id,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
+        'id'        => $model->id,
     ],
 ]); ?>
 
 <div class="box-body">
-    <?= Html::activeHiddenInput($model, 'key_value_namespace') ?>
-    <?= Html::activeHiddenInput($model, 'key_value_group') ?>
+    <?= Html::activeHiddenInput($model, 'namespace') ?>
+    <?= Html::activeHiddenInput($model, 'group') ?>
 
-    <?= $form->field($model, 'key_value_key')->textInput([
+    <?= $form->field($model, 'key')->textInput([
         'maxlength' => true,
         'disabled'  => !$model->isNewRecord,
     ]) ?>
 
-    <?= $form->field($model, 'key_value_type')->widget(Select2::class, [
+    <?= $form->field($model, 'type')->widget(Select2::class, [
         'data'         => KeyValue::typeList(),
         'hideSearch'   => true,
         'pluginEvents' => [
@@ -39,14 +39,14 @@ use yii\web\View;
         ],
     ]) ?>
 
-    <?= $form->field($model, 'key_value_value')->widget(CodeEditor::class, [
+    <?= $form->field($model, 'value')->widget(CodeEditor::class, [
         'clientOptions' => [
-            'mode' => $model->getEditorMode(),
+            'mode'     => $model->getEditorMode(),
             'maxLines' => 40,
         ],
     ]) ?>
 
-    <?= $form->field($model, 'key_value_memo')->textarea([
+    <?= $form->field($model, 'memo')->textarea([
         'rows' => 2,
     ]) ?>
 
@@ -63,7 +63,7 @@ use yii\web\View;
 <script>
     <?php $this->beginBlock('typeChange') ?>
     const mapping = <?= json_encode(KeyValue::getEditorModes()) ?>,
-        editor = aceInstance['<?= Html::getInputId($model, 'key_value_value') ?>'];
+        editor = aceInstance['<?= Html::getInputId($model, 'value') ?>'];
 
     function typeChange(e) {
         let type = $(e.currentTarget).val();

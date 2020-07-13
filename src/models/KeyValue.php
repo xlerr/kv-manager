@@ -8,32 +8,37 @@ use kvmanager\components\NacosComponent;
 use kvmanager\KVException;
 use xlerr\CodeEditor\CodeEditor;
 use Yii;
+use yii\base\InvalidConfigException;
+use yii\behaviors\BlameableBehavior;
 use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "key_value".
  *
- * @property integer $key_value_id
- * @property string  $key_value_namespace
- * @property string  $key_value_group
- * @property string  $key_value_key
- * @property string  $key_value_type
- * @property string  $key_value_value
- * @property string  $key_value_memo
- * @property string  $key_value_create_at
- * @property string  $key_value_update_at
+ * @property int    $id
+ * @property string $namespace
+ * @property string $group
+ * @property string $key
+ * @property string $type
+ * @property string $value
+ * @property string $memo
+ * @property string $created_at
+ * @property string $updated_at
+ * @property int    $updated_by
+ * @property int    $created_by
  */
 class KeyValue extends BaseModel
 {
-    public static $namespaceFieldName = 'key_value_namespace';
-    public static $groupFieldName = 'key_value_group';
-    public static $keyFieldName = 'key_value_key';
-    public static $typeFieldName = 'key_value_type';
-    public static $valueFieldName = 'key_value_value';
+    public static $namespaceFieldName = 'namespace';
+    public static $groupFieldName = 'group';
+    public static $keyFieldName = 'key';
+    public static $typeFieldName = 'type';
+    public static $valueFieldName = 'value';
 
     public function behaviors()
     {
         return array_merge(parent::behaviors(), [
+            BlameableBehavior::class,
             // 同步到配置中心
             NacosBehavior::class,
         ]);
@@ -49,7 +54,8 @@ class KeyValue extends BaseModel
         return [
                 'text' => 'TEXT',
                 'json' => 'JSON',
-            ] + ($config['types'] ?? []);
+                'yaml' => 'YAML',
+            ] + ((array)($config['types'] ?? []));
     }
 
     public static function getEditorModes()
@@ -62,14 +68,15 @@ class KeyValue extends BaseModel
         return [
                 'text' => CodeEditor::MODE_Text,
                 'json' => CodeEditor::MODE_JSON,
-            ] + ($config['modes'] ?? []);
+                'yaml' => CodeEditor::MODE_YAML,
+            ] + ((array)($config['modes'] ?? []));
     }
 
     public function getEditorMode()
     {
         $mapping = self::getEditorModes();
-        if (isset($mapping[$this->key_value_type])) {
-            return $mapping[$this->key_value_type];
+        if (isset($mapping[$this->type])) {
+            return $mapping[$this->type];
         }
 
         return CodeEditor::MODE_Text;
@@ -94,19 +101,26 @@ class KeyValue extends BaseModel
             [[self::$keyFieldName, self::$typeFieldName], 'required'],
             [[self::$typeFieldName], 'in', 'range' => array_keys(self::typeList())],
             [[self::$keyFieldName], 'string', 'max' => 100],
+            [[self::$namespaceFieldName, self::$groupFieldName], 'string', 'max' => 64],
             [[self::$valueFieldName], 'string', 'max' => 20000],
             [
                 [
-                    'key_value_memo',
-                    'key_value_create_at',
-                    'key_value_update_at',
+                    'memo',
+                    'created_at',
+                    'updated_at',
+                    'created_by',
+                    'updated_by',
                 ],
                 'safe',
             ],
             [
                 [self::$keyFieldName],
                 'unique',
-                'targetAttribute' => [self::$namespaceFieldName, self::$groupFieldName, self::$keyFieldName],
+                'targetAttribute' => [
+                    self::$namespaceFieldName,
+                    self::$groupFieldName,
+                    self::$keyFieldName,
+                ],
             ],
         ];
     }
@@ -117,16 +131,28 @@ class KeyValue extends BaseModel
     public function attributeLabels()
     {
         return [
-            'key_value_id'            => Yii::t('kvmanager', 'ID'),
+            'id'                      => Yii::t('kvmanager', 'ID'),
             self::$namespaceFieldName => Yii::t('kvmanager', 'Namespace'),
             self::$groupFieldName     => Yii::t('kvmanager', 'Group'),
             self::$keyFieldName       => Yii::t('kvmanager', 'Key'),
-            'key_value_type'          => Yii::t('kvmanager', 'Type'),
             self::$valueFieldName     => Yii::t('kvmanager', 'Value'),
-            'key_value_memo'          => Yii::t('kvmanager', 'Memo'),
-            'key_value_create_at'     => Yii::t('kvmanager', 'Created At'),
-            'key_value_update_at'     => Yii::t('kvmanager', 'Updated At'),
+            self::$typeFieldName      => Yii::t('kvmanager', 'Type'),
+            'memo'                    => Yii::t('kvmanager', 'Memo'),
+            'created_at'              => Yii::t('kvmanager', 'Created At'),
+            'updated_at'              => Yii::t('kvmanager', 'Updated At'),
+            'updated_by'              => Yii::t('kvmanager', 'Updated By'),
+            'created_by'              => Yii::t('kvmanager', 'Created By'),
         ];
+    }
+
+    public function getCreator()
+    {
+        return $this->hasOne(Yii::$app->getUser()->identityClass, ['id' => 'created_by']);
+    }
+
+    public function getOperator()
+    {
+        return $this->hasOne(Yii::$app->getUser()->identityClass, ['id' => 'updated_by']);
     }
 
     /**
@@ -134,7 +160,7 @@ class KeyValue extends BaseModel
      *
      * @return int
      * @throws NacosApiException
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function pullConfig()
     {
@@ -146,7 +172,7 @@ class KeyValue extends BaseModel
         return self::updateAll([
             self::$valueFieldName => $instance->getData(),
         ], [
-            'key_value_id' => $this->key_value_id,
+            'id' => $this->id,
         ]);
     }
 }

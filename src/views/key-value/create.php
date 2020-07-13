@@ -1,20 +1,23 @@
 <?php
 
-/* @var $this yii\web\View */
+use kvmanager\models\KeyValue;
+use yii\web\View;
 
-/* @var $model \kvmanager\models\KeyValue */
+/* @var $this View */
+/* @var $model KeyValue */
 
-$this->title                   = Yii::t('kvmanager', 'Create');
+$this->title = Yii::t('kvmanager', 'Create');
+
 $this->params['breadcrumbs'][] = [
     'label' => Yii::t('kvmanager', 'Key Value'),
     'url'   => [
         'index',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
     ],
 ];
-$this->params['breadcrumbs'][] = $model->key_value_namespace;
-$this->params['breadcrumbs'][] = $model->key_value_group;
+$this->params['breadcrumbs'][] = $model->namespace;
+$this->params['breadcrumbs'][] = $model->group;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box box-primary">

@@ -6,6 +6,7 @@ use kvmanager\behaviors\CacheBehavior;
 use kvmanager\KVException;
 use Symfony\Component\Yaml\Yaml;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\caching\Cache;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -83,8 +84,14 @@ abstract class BaseModel extends ActiveRecord
     {
         static $cache = [];
         [$namespace, $group, $key] = self::parseKey($key);
-        if (isset($cache[static::class][$namespace][$group][$key])) {
-            $config = $cache[static::class][$namespace][$group][$key];
+        $cacheKey = implode('_', [
+            static::class,
+            $namespace,
+            $group,
+            $key,
+        ]);
+        if (isset($cache[$cacheKey])) {
+            $config = $cache[$cacheKey];
         } else {
             $config = static::find()
                 // 利用查询缓存
@@ -104,9 +111,14 @@ abstract class BaseModel extends ActiveRecord
                 ->one();
 
             if (null === $config) {
-                throw new KVException(sprintf('`%s.%s.%s` is not in \\%s', $namespace, $group, $key, static::class));
+                throw new KVException(vsprintf('`%s.%s.%s` is not in \\%s', [
+                    $namespace,
+                    $group,
+                    $key,
+                    static::class,
+                ]));
             }
-            $cache[static::class][$namespace][$group][$key] = $config;
+            $cache[$cacheKey] = $config;
         }
 
         if ($format === self::TAKE_FORMAT_RAW) {
@@ -140,11 +152,12 @@ abstract class BaseModel extends ActiveRecord
         if (is_string($key)) {
             $key = explode('.', $key, 3);
         }
+        $key = (array)$key;
 
         switch (count($key)) {
             case 1:
                 array_unshift($key, self::getDefaultGroup());
-            case 2;
+            case 2:
                 array_unshift($key, self::getDefaultNamespace());
         }
 
@@ -152,7 +165,7 @@ abstract class BaseModel extends ActiveRecord
     }
 
     /**
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function cleanCache()
     {

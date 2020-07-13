@@ -19,31 +19,31 @@ use yii\helpers\Html;
         <?php $form = ActiveForm::begin([
             'action' => [
                 'index',
-                'key_value_namespace' => $model->key_value_namespace,
-                'key_value_group'     => $model->key_value_group,
+                'namespace' => $model->namespace,
+                'group'     => $model->group,
             ],
             'method' => 'get',
             'type'   => ActiveForm::TYPE_INLINE,
         ]); ?>
 
-        <?= $form->field($model, 'key_value_key') ?>
+        <?= $form->field($model, 'key') ?>
 
-        <?= $form->field($model, 'key_value_value') ?>
+        <?= $form->field($model, 'value') ?>
 
-        <?= $form->field($model, 'key_value_memo') ?>
+        <?= $form->field($model, 'memo') ?>
 
         <?= Html::submitButton(Yii::t('kvmanager', 'Search'), ['class' => 'btn btn-primary']) ?>
 
         <?= Html::a(Yii::t('kvmanager', 'Reset'), [
             'index',
-            'key_value_namespace' => $model->key_value_namespace,
-            'key_value_group'     => $model->key_value_group,
+            'namespace' => $model->namespace,
+            'group'     => $model->group,
         ], ['class' => 'btn btn-default']); ?>
 
         <?= Html::a(Yii::t('kvmanager', 'Create'), [
             'create',
-            'key_value_namespace' => $model->key_value_namespace,
-            'key_value_group'     => $model->key_value_group,
+            'namespace' => $model->namespace,
+            'group'     => $model->group,
         ], ['class' => 'btn btn-success']) ?>
 
         <?php ActiveForm::end(); ?>

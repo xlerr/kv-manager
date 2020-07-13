@@ -2,12 +2,17 @@
 
 namespace kvmanager\controllers;
 
+use kemanager\NacosApiException;
 use kvmanager\models\KeyValue;
 use kvmanager\models\KeyValueSearch;
+use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * KeyValueController implements the CRUD actions for KeyValue model.
@@ -27,6 +32,9 @@ class KeyValueController extends Controller
         ];
     }
 
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
         $searchModel  = new KeyValueSearch();
@@ -38,6 +46,14 @@ class KeyValueController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     *
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws NacosApiException
+     * @throws InvalidConfigException
+     */
     public function actionSync($id)
     {
         $model = $this->findModel($id);
@@ -47,6 +63,12 @@ class KeyValueController extends Controller
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }
 
+    /**
+     * @param $id
+     *
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionView($id)
     {
         return $this->render('view', [
@@ -54,20 +76,23 @@ class KeyValueController extends Controller
         ]);
     }
 
+    /**
+     * @return string|Response
+     */
     public function actionCreate()
     {
         $model = new KeyValue();
 
-        $model->key_value_namespace = Yii::$app->getRequest()->get('key_value_namespace');
-        $model->key_value_group     = Yii::$app->getRequest()->get('key_value_group');
+        $model->namespace = Yii::$app->getRequest()->get('namespace');
+        $model->group     = Yii::$app->getRequest()->get('group');
 
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect([
                     'view',
-                    'key_value_namespace' => $model->key_value_namespace,
-                    'key_value_group'     => $model->key_value_group,
-                    'id'                  => $model->key_value_id,
+                    'namespace' => $model->namespace,
+                    'group'     => $model->group,
+                    'id'        => $model->id,
                 ]);
             }
         }
@@ -77,6 +102,12 @@ class KeyValueController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     *
+     * @return string|Response
+     * @throws NotFoundHttpException
+     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -84,9 +115,9 @@ class KeyValueController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect([
                 'view',
-                'key_value_namespace' => $model->key_value_namespace,
-                'key_value_group'     => $model->key_value_group,
-                'id'                  => $model->key_value_id,
+                'namespace' => $model->namespace,
+                'group'     => $model->group,
+                'id'        => $model->id,
             ]);
         } else {
             return $this->render('update', [
@@ -95,6 +126,14 @@ class KeyValueController extends Controller
         }
     }
 
+    /**
+     * @param $id
+     *
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
+     */
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
@@ -104,6 +143,13 @@ class KeyValueController extends Controller
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }
 
+    /**
+     * @param $id
+     *
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws InvalidConfigException
+     */
     public function actionCleanCache($id)
     {
         $this->findModel($id)->cleanCache();
@@ -111,6 +157,12 @@ class KeyValueController extends Controller
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }
 
+    /**
+     * @param $id
+     *
+     * @return KeyValue|null
+     * @throws NotFoundHttpException
+     */
     protected function findModel($id)
     {
         if (($model = KeyValue::findOne($id)) !== null) {

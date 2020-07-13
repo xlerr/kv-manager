@@ -9,39 +9,50 @@ use yii\widgets\DetailView;
 /* @var $this View */
 /* @var $model KeyValue */
 
-$this->title = $model->key_value_key;
+$this->title = $model->key;
 
 $this->params['breadcrumbs'][] = [
     'label' => Yii::t('kvmanager', 'Key Value'),
     'url'   => [
         'index',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
     ],
 ];
-$this->params['breadcrumbs'][] = $model->key_value_namespace;
-$this->params['breadcrumbs'][] = $model->key_value_group;
+$this->params['breadcrumbs'][] = $model->namespace;
+$this->params['breadcrumbs'][] = $model->group;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <p>
     <?= Html::a(Yii::t('kvmanager', 'Clean Cache'), [
         'clean-cache',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
-        'id'                  => $model->key_value_id,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
+        'id'        => $model->id,
     ], ['class' => 'btn btn-warning']) ?>
+    <?= Html::a(Yii::t('kvmanager', 'Sync'), [
+        'sync',
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
+        'id'        => $model->id,
+    ], [
+        'class' => 'btn btn-facebook',
+        'data'  => [
+            'method' => 'post',
+        ],
+    ]) ?>
     <?= Html::a(Yii::t('yii', 'Update'), [
         'update',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
-        'id'                  => $model->key_value_id,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
+        'id'        => $model->id,
     ], ['class' => 'btn btn-primary']) ?>
     <?= Html::a(Yii::t('yii', 'Delete'), [
         'delete',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
-        'id'                  => $model->key_value_id,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
+        'id'        => $model->id,
     ], [
         'class' => 'btn btn-danger',
         'data'  => [
@@ -51,13 +62,13 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
     <?= Html::a(Yii::t('kvmanager', 'Create'), [
         'create',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
     ], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('kvmanager', 'Go Back'), [
         'index',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
     ], ['class' => 'btn btn-default']) ?>
 </p>
 <div class="box box-primary">
@@ -72,16 +83,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'table table-striped detail-view',
             ],
             'attributes' => [
-                'key_value_id',
-                'key_value_namespace',
-                'key_value_group',
-                'key_value_key',
+                'id',
+                'namespace',
+                'group',
+                'key',
                 [
-                    'attribute' => 'key_value_type',
+                    'attribute' => 'type',
                     'format'    => ['in', KeyValue::typeList()],
                 ],
                 [
-                    'attribute'      => 'key_value_value',
+                    'attribute'      => 'value',
                     'captionOptions' => [
                         'style' => 'width: 10%',
                     ],
@@ -96,9 +107,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                 ],
-                'key_value_memo:ntext',
-                'key_value_create_at',
-                'key_value_update_at',
+                'memo:ntext',
+                'created_at',
+                'updated_at',
+                [
+                    'label'     => '创建者',
+                    'attribute' => 'creator.username',
+                ],
+                [
+                    'label'     => '修改者',
+                    'attribute' => 'operator.username',
+                ],
             ],
         ]) ?>
     </div>

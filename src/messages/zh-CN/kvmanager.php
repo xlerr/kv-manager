@@ -11,6 +11,8 @@ return [
     'Memo'        => '备注',
     'Created At'  => '创建时间',
     'Updated At'  => '更新时间',
+    'Updated By'  => '修改人',
+    'Created By'  => '创建人',
 
     // views
     'Key Value'   => '配置列表',

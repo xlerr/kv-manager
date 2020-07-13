@@ -6,27 +6,27 @@ use yii\web\View;
 /* @var $this View */
 /* @var $model KeyValue */
 
-$this->title = Yii::t('kvmanager', 'Update: {0}', $model->key_value_key);
+$this->title = Yii::t('kvmanager', 'Update: {0}', $model->key);
 
 $this->params['breadcrumbs'][] = [
     'label' => Yii::t('kvmanager', 'Key Value'),
     'url'   => [
         'index',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
     ],
 ];
 $this->params['breadcrumbs'][] = [
     'label' => Yii::t('kvmanager', 'Detail'),
     'url'   => [
         'view',
-        'key_value_namespace' => $model->key_value_namespace,
-        'key_value_group'     => $model->key_value_group,
-        'id'                  => $model->key_value_id,
+        'namespace' => $model->namespace,
+        'group'     => $model->group,
+        'id'        => $model->id,
     ],
 ];
-$this->params['breadcrumbs'][] = $model->key_value_namespace;
-$this->params['breadcrumbs'][] = $model->key_value_group;
+$this->params['breadcrumbs'][] = $model->namespace;
+$this->params['breadcrumbs'][] = $model->group;
 $this->params['breadcrumbs'][] = Yii::t('kvmanager', 'Update');
 ?>
 
