@@ -4,13 +4,11 @@ namespace kvmanager\models;
 
 use kvmanager\behaviors\CacheBehavior;
 use kvmanager\KVException;
-use Symfony\Component\Yaml\Yaml;
+use kvmanager\parser\Parser;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\Cache;
-use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
-use yii\di\Instance;
 
 abstract class BaseModel extends ActiveRecord
 {
@@ -80,24 +78,16 @@ abstract class BaseModel extends ActiveRecord
      * @return array|object|string
      * @throws KVException
      */
-    public static function take($key, $format = self::TAKE_FORMAT_ARRAY)
+    public static function take($key, $namespace = null, $group = null, $format = self::TAKE_FORMAT_ARRAY)
     {
-        static $cache = [];
-        [$namespace, $group, $key] = self::parseKey($key);
-        $cacheKey = implode('_', [
-            static::class,
-            $namespace,
-            $group,
-            $key,
-        ]);
-        if (isset($cache[$cacheKey])) {
-            $config = $cache[$cacheKey];
-        } else {
+        $namespace = $namespace ?? self::getDefaultNamespace();
+        $group     = $group ?? self::getDefaultGroup();
+
+        $cache    = Yii::$app->getCache();
+        $cacheKey = implode(':', [$namespace, $group, $key]);
+
+        if (false === ($config = $cache->get($cacheKey))) {
             $config = static::find()
-                // 利用查询缓存
-                ->cache(3600, new TagDependency([
-                    'tags' => sprintf('%s:%s:%s:%s', static::class, $namespace, $group, $key),
-                ]))
                 ->where([
                     static::$namespaceFieldName => $namespace,
                     static::$groupFieldName     => $group,
@@ -111,57 +101,17 @@ abstract class BaseModel extends ActiveRecord
                 ->one();
 
             if (null === $config) {
-                throw new KVException(vsprintf('`%s.%s.%s` is not in \\%s', [
+                throw new KVException(vsprintf('%s.%s.%s not found in \\%s', [
                     $namespace,
                     $group,
                     $key,
                     static::class,
                 ]));
             }
-            $cache[$cacheKey] = $config;
+            $cache->set($cacheKey, $config, 86400);
         }
 
-        if ($format === self::TAKE_FORMAT_RAW) {
-            return $config['value'];
-        }
-
-        if ($config['type'] === 'json') {
-            $config['value'] = json_decode($config['value'], true);
-        } elseif ($config['type'] === 'yaml') {
-            $config['value'] = Yaml::parse($config['value']);
-        } else {
-            throw new KVException(sprintf('不支持解析[%s]格式内容', $config['type']));
-        }
-
-        if ($format === self::TAKE_FORMAT_ARRAY) {
-            return (array)$config['value'];
-        } elseif ($format === self::TAKE_FORMAT_OBJECT) {
-            return (object)$config['value'];
-        }
-
-        throw new KVException('返回值格式异常: ' . $format);
-    }
-
-    /**
-     * @param array|string $key
-     *
-     * @return array [namespace, group, key]
-     */
-    protected static function parseKey($key)
-    {
-        if (is_string($key)) {
-            $key = explode('.', $key, 3);
-        }
-        $key = (array)$key;
-
-        switch (count($key)) {
-            case 1:
-                array_unshift($key, self::getDefaultGroup());
-            case 2:
-                array_unshift($key, self::getDefaultNamespace());
-        }
-
-        return $key;
+        return Parser::create($config['type'], $format)->parse($config['value']);
     }
 
     /**
@@ -170,15 +120,13 @@ abstract class BaseModel extends ActiveRecord
     public function cleanCache()
     {
         /** @var Cache $cache */
-        $cache = Instance::ensure(static::getDb()->queryCache, Cache::class);
+        $cache = Yii::$app->getCache();
 
-        TagDependency::invalidate($cache, [
-            vsprintf('%s:%s:%s:%s', [
-                get_class($this),
-                $this->getAttribute(static::$namespaceFieldName),
-                $this->getAttribute(static::$groupFieldName),
-                $this->getAttribute(static::$keyFieldName),
-            ]),
+        $cacheKey = vsprintf('%s:%s:%s', [
+            $this->getAttribute(static::$namespaceFieldName),
+            $this->getAttribute(static::$groupFieldName),
+            $this->getAttribute(static::$keyFieldName),
         ]);
+        $cache->delete($cacheKey);
     }
 }

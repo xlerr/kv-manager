@@ -2,9 +2,25 @@
 
 use kartik\widgets\ActiveForm;
 use kvmanager\models\KeyValue;
+use xlerr\common\widgets\Select2;
 use yii\helpers\Html;
+use yii\web\JsExpression;
+use yii\web\View;
 
+/** @var $this View */
 /** @var $model KeyValue */
+
+$groupList = (array)KeyValue::find()
+    ->where([
+        KeyValue::$namespaceFieldName => $model->{KeyValue::$namespaceFieldName},
+    ])
+    ->select(KeyValue::$groupFieldName)
+    ->distinct()
+    ->column();
+
+if (!array_search($model->group, $groupList)) {
+    $groupList[] = $model->group;
+}
 ?>
 
 <div class="box box-default search">
@@ -25,6 +41,17 @@ use yii\helpers\Html;
             'method' => 'get',
             'type'   => ActiveForm::TYPE_INLINE,
         ]); ?>
+
+        <?= $form->field($model, 'group')->widget(Select2::class, [
+            'data'         => array_combine($groupList, $groupList),
+            'hideSearch'   => true,
+            'pluginEvents' => [
+                'change' => new JsExpression('switchGroup'),
+            ],
+            'options'      => [
+                'name' => '_',
+            ],
+        ]) ?>
 
         <?= $form->field($model, 'key') ?>
 
@@ -49,3 +76,11 @@ use yii\helpers\Html;
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+<script>
+    <?php $this->beginBlock('switchGroup') ?>
+    function switchGroup(e) {
+        window.location.pathname = window.location.pathname.toString().replace(/\/[\w\-]+$/, '/' + $(e.currentTarget).val());
+    }
+    <?php $this->endBlock() ?>
+    <?php $this->registerJs($this->blocks['switchGroup']) ?>
+</script>

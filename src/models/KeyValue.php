@@ -2,6 +2,7 @@
 
 namespace kvmanager\models;
 
+use common\models\User;
 use kemanager\NacosApiException;
 use kvmanager\behaviors\NacosBehavior;
 use kvmanager\components\NacosComponent;
@@ -15,20 +16,26 @@ use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "key_value".
  *
- * @property int    $id
- * @property string $namespace
- * @property string $group
- * @property string $key
- * @property string $type
- * @property string $value
- * @property string $memo
- * @property string $created_at
- * @property string $updated_at
- * @property int    $updated_by
- * @property int    $created_by
+ * @property int       $id
+ * @property string    $namespace
+ * @property string    $group
+ * @property string    $key
+ * @property string    $type
+ * @property string    $value
+ * @property string    $memo
+ * @property string    $created_at
+ * @property string    $updated_at
+ * @property int       $updated_by
+ * @property int       $created_by
+ * @property-read User $creator
+ * @property-read User $operator
  */
 class KeyValue extends BaseModel
 {
+    const TYPE_TEXT = 'text';
+    const TYPE_JSON = 'json';
+    const TYPE_YAML = 'yaml';
+
     public static $namespaceFieldName = 'namespace';
     public static $groupFieldName = 'group';
     public static $keyFieldName = 'key';
@@ -52,9 +59,9 @@ class KeyValue extends BaseModel
         }
 
         return [
-                'text' => 'TEXT',
-                'json' => 'JSON',
-                'yaml' => 'YAML',
+                self::TYPE_TEXT => 'TEXT',
+                self::TYPE_JSON => 'JSON',
+                self::TYPE_YAML => 'YAML',
             ] + ((array)($config['types'] ?? []));
     }
 
@@ -66,9 +73,9 @@ class KeyValue extends BaseModel
         }
 
         return [
-                'text' => CodeEditor::MODE_Text,
-                'json' => CodeEditor::MODE_JSON,
-                'yaml' => CodeEditor::MODE_YAML,
+                self::TYPE_TEXT => CodeEditor::MODE_Text,
+                self::TYPE_JSON => CodeEditor::MODE_JSON,
+                self::TYPE_YAML => CodeEditor::MODE_YAML,
             ] + ((array)($config['modes'] ?? []));
     }
 

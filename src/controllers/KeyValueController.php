@@ -37,8 +37,17 @@ class KeyValueController extends Controller
      */
     public function actionIndex()
     {
+        $request = Yii::$app->getRequest();
+        if (empty($request->get(KeyValue::$namespaceFieldName)) || empty($request->get(KeyValue::$groupFieldName))) {
+            return $this->redirect([
+                'index',
+                KeyValue::$namespaceFieldName => KeyValue::getDefaultNamespace(),
+                KeyValue::$groupFieldName     => KeyValue::getDefaultGroup(),
+            ]);
+        }
+
         $searchModel  = new KeyValueSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($request->queryParams);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -85,14 +94,14 @@ class KeyValueController extends Controller
 
         $model->namespace = Yii::$app->getRequest()->get('namespace');
         $model->group     = Yii::$app->getRequest()->get('group');
+        $model->type      = 'json';
 
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect([
-                    'view',
+                    'index',
                     'namespace' => $model->namespace,
                     'group'     => $model->group,
-                    'id'        => $model->id,
                 ]);
             }
         }
@@ -114,10 +123,9 @@ class KeyValueController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect([
-                'view',
+                'index',
                 'namespace' => $model->namespace,
                 'group'     => $model->group,
-                'id'        => $model->id,
             ]);
         } else {
             return $this->render('update', [

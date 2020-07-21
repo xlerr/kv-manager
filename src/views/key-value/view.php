@@ -96,16 +96,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     'captionOptions' => [
                         'style' => 'width: 10%',
                     ],
-                    'format'         => function ($val) use ($model) {
-                        return CodeEditor::widget([
-                            'name'          => 'value_show',
-                            'value'         => $val,
-                            'clientOptions' => [
-                                'readOnly' => true,
-                                'mode'     => $model->getEditorMode(),
-                            ],
-                        ]);
-                    },
+                    'format'         => 'raw',
+                    'value'          => CodeEditor::widget([
+                        'name'          => 'value_show',
+                        'value'         => $model->value,
+                        'clientOptions' => [
+                            'readOnly' => true,
+                            'mode'     => $model->getEditorMode(),
+                            'maxLines' => 40,
+                        ],
+                    ]),
                 ],
                 'memo:ntext',
                 'created_at',

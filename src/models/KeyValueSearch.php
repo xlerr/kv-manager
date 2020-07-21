@@ -45,7 +45,8 @@ class KeyValueSearch extends KeyValue
      */
     public function search($params)
     {
-        $query = KeyValue::find();
+        $query = KeyValue::find()
+            ->with(['operator']);
 
         // add conditions that should always apply here
 

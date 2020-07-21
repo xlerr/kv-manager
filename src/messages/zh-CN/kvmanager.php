@@ -20,6 +20,7 @@ return [
     'Reset'       => '重置搜索条件',
     'Clean Cache' => '清理缓存',
     'Update'      => '更新',
+    'Save'        => '保存',
     'Delete'      => '删除',
     'Sync'        => '同步',
     'View'        => '查看',

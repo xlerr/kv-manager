@@ -1,7 +1,6 @@
 {
   "name": "xlerr/kvmanager",
   "type": "library",
-  "version": "3.0.5",
   "authors": [
     {
       "name": "xlerr",
@@ -13,7 +12,7 @@
     "php": ">=7.1",
     "ext-json": "*",
     "xlerr/yii2-common-widgets": "^1.5",
-    "xlerr/httpca": ">=1.1.0",
+    "xlerr/httpca": ">=0.0.3 <1.0 || ^1.1",
     "xlerr/yii2-widget-code-editor": "^1.0",
     "symfony/yaml": ">=2.7 <6.0",
     "yiisoft/yii2": "^2.0"

@@ -1,5 +1,6 @@
 <?php
 
+use kartik\widgets\TypeaheadBasic;
 use kvmanager\models\KeyValue;
 use xlerr\CodeEditor\CodeEditor;
 use xlerr\common\widgets\ActiveForm;
@@ -11,6 +12,13 @@ use yii\web\View;
 /* @var $this View */
 /* @var $model KeyValue */
 
+$groupList = (array)KeyValue::find()
+    ->where([
+        KeyValue::$namespaceFieldName => $model->{KeyValue::$namespaceFieldName},
+    ])
+    ->select(KeyValue::$groupFieldName)
+    ->distinct()
+    ->column();
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -23,8 +31,20 @@ use yii\web\View;
 ]); ?>
 
 <div class="box-body">
-    <?= Html::activeHiddenInput($model, 'namespace') ?>
-    <?= Html::activeHiddenInput($model, 'group') ?>
+    <?= $form->field($model, 'namespace')->textInput([
+        'disabled' => true,
+    ]) ?>
+
+    <?= $form->field($model, 'group')->widget(TypeaheadBasic::class, [
+        'disabled'      => !$model->isNewRecord,
+        'data'          => $groupList,
+        'pluginOptions' => [
+            'highlight' => true,
+        ],
+        'options'       => [
+            'autocomplete' => 'off',
+        ],
+    ]) ?>
 
     <?= $form->field($model, 'key')->textInput([
         'maxlength' => true,
@@ -46,15 +66,21 @@ use yii\web\View;
         ],
     ]) ?>
 
-    <?= $form->field($model, 'memo')->textarea([
-        'rows' => 2,
+    <?= $form->field($model, 'memo')->widget(CodeEditor::class, [
+        'clientOptions' => [
+            'mode'     => CodeEditor::MODE_Tex,
+            'maxLines' => 40,
+        ],
     ]) ?>
 
 </div>
 
 <div class="box-footer">
-    <?= Html::submitButton(Yii::t('kvmanager', $model->isNewRecord ? 'Create' : 'Update'), [
-        'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+    <?= Html::submitButton(Yii::t('kvmanager', 'Save'), [
+        'class' => 'btn btn-primary',
+    ]) ?>
+    <?= Html::a('取消', Yii::$app->getRequest()->getReferrer(), [
+        'class' => 'btn btn-default',
     ]) ?>
 </div>
 
