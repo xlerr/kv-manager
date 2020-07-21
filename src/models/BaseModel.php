@@ -5,6 +5,7 @@ namespace kvmanager\models;
 use kvmanager\behaviors\CacheBehavior;
 use kvmanager\KVException;
 use kvmanager\parser\Parser;
+use stdClass;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\Cache;
@@ -72,8 +73,49 @@ abstract class BaseModel extends ActiveRecord
     }
 
     /**
-     * @param array|string $key
-     * @param string       $format
+     * @param string      $key
+     * @param null|string $namespace
+     * @param null|string $group
+     *
+     * @return stdClass
+     * @throws KVException
+     */
+    public static function takeAsObject($key, $namespace = null, $group = null)
+    {
+        return self::take($key, $namespace, $group, self::TAKE_FORMAT_OBJECT);
+    }
+
+    /**
+     * @param string      $key
+     * @param null|string $namespace
+     * @param null|string $group
+     *
+     * @return array
+     * @throws KVException
+     */
+    public static function takeAsArray($key, $namespace = null, $group = null)
+    {
+        return self::take($key, $namespace, $group, self::TAKE_FORMAT_ARRAY);
+    }
+
+    /**
+     * @param string      $key
+     * @param null|string $namespace
+     * @param null|string $group
+     *
+     * @return string
+     * @throws KVException
+     */
+    public static function takeAsRaw($key, $namespace = null, $group = null)
+    {
+        return self::take($key, $namespace, $group, self::TAKE_FORMAT_RAW);
+    }
+
+    /**
+     * @param string      $key
+     * @param string|null $namespace
+     * @param string|null $group
+     * @param string      $format
      *
      * @return array|object|string
      * @throws KVException
