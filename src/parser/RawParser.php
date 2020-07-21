@@ -2,7 +2,7 @@
 
 namespace kvmanager\parser;
 
-class RawParser extends BaseParser
+class RawParser extends Parser
 {
     /**
      * @param string $raw

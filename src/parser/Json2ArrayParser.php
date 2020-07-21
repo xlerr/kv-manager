@@ -4,7 +4,7 @@ namespace kvmanager\parser;
 
 use kvmanager\KVException;
 
-class Json2ArrayParser extends BaseParser
+class Json2ArrayParser extends Parser
 {
     /**
      * @param string $raw
