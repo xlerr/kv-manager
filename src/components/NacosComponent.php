@@ -4,7 +4,7 @@ namespace kvmanager\components;
 
 use GuzzleHttp\Middleware;
 use GuzzleHttp\RequestOptions;
-use kemanager\NacosApiException;
+use kvmanager\NacosApiException;
 use kvmanager\models\BaseModel;
 use Psr\Http\Message\ResponseInterface;
 use xlerr\httpca\ComponentTrait;

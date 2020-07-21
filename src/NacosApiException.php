@@ -1,6 +1,6 @@
 <?php
 
-namespace kemanager;
+namespace kvmanager;
 
 use Exception;
 

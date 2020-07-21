@@ -2,7 +2,7 @@
 
 namespace kvmanager\controllers;
 
-use kemanager\NacosApiException;
+use kvmanager\NacosApiException;
 use kvmanager\models\KeyValue;
 use kvmanager\models\KeyValueSearch;
 use Throwable;

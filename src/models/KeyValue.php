@@ -3,7 +3,7 @@
 namespace kvmanager\models;
 
 use common\models\User;
-use kemanager\NacosApiException;
+use kvmanager\NacosApiException;
 use kvmanager\behaviors\NacosBehavior;
 use kvmanager\components\NacosComponent;
 use kvmanager\KVException;
