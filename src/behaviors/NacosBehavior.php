@@ -44,6 +44,10 @@ class NacosBehavior extends Behavior
         /** @var BaseModel $model */
         $model = $this->owner;
 
+        if ($model->{$model::$keyFieldName} === NacosComponent::CONFIG_KEY) {
+            return;
+        }
+
         $fullkey = vsprintf('%s.%s.%s', [
             $model->{$model::$namespaceFieldName},
             $model->{$model::$groupFieldName},
@@ -52,7 +56,7 @@ class NacosBehavior extends Behavior
 
         $exceptSyncList = $this->getExceptSyncConfig();
         foreach ($exceptSyncList as $except) {
-            if (stripos($fullkey, $except) !== false) {
+            if (stripos($fullkey, $except) === 0) {
                 return;
             }
         }
