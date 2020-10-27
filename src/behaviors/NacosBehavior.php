@@ -24,6 +24,17 @@ class NacosBehavior extends Behavior
     }
 
     /**
+     * @return array
+     * @throws KVException
+     */
+    public function getExceptSyncConfig()
+    {
+        $config = KeyValue::take(NacosComponent::CONFIG_KEY);
+
+        return (array)($config['exceptSync'] ?? []);
+    }
+
+    /**
      * @param $event
      *
      * @throws KVException
@@ -33,8 +44,17 @@ class NacosBehavior extends Behavior
         /** @var BaseModel $model */
         $model = $this->owner;
 
-        if ($model->{$model::$keyFieldName} === NacosComponent::CONFIG_KEY) {
-            return;
+        $fullkey = vsprintf('%s.%s.%s', [
+            $model->{$model::$namespaceFieldName},
+            $model->{$model::$groupFieldName},
+            $model->{$model::$keyFieldName},
+        ]);
+
+        $exceptSyncList = $this->getExceptSyncConfig();
+        foreach ($exceptSyncList as $except) {
+            if (stripos($fullkey, $except) !== false) {
+                return;
+            }
         }
 
         $nacos = NacosComponent::instance();

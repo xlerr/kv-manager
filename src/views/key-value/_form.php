@@ -1,6 +1,5 @@
 <?php
 
-use kartik\widgets\TypeaheadBasic;
 use kvmanager\models\KeyValue;
 use xlerr\CodeEditor\CodeEditor;
 use xlerr\common\widgets\ActiveForm;
@@ -12,13 +11,11 @@ use yii\web\View;
 /* @var $this View */
 /* @var $model KeyValue */
 
-$groupList = (array)KeyValue::find()
-    ->where([
-        KeyValue::$namespaceFieldName => $model->{KeyValue::$namespaceFieldName},
-    ])
-    ->select(KeyValue::$groupFieldName)
-    ->distinct()
-    ->column();
+$group = KeyValue::getAvailable()[$model->namespace] ?? [];
+if ($group) {
+    $group = array_combine($group, $group);
+}
+
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -35,15 +32,10 @@ $groupList = (array)KeyValue::find()
         'disabled' => true,
     ]) ?>
 
-    <?= $form->field($model, 'group')->widget(TypeaheadBasic::class, [
-        'disabled'      => !$model->isNewRecord,
-        'data'          => $groupList,
-        'pluginOptions' => [
-            'highlight' => true,
-        ],
-        'options'       => [
-            'autocomplete' => 'off',
-        ],
+    <?= $form->field($model, 'group')->widget(Select2::class, [
+        'disabled'   => !$model->isNewRecord,
+        'data'       => $group,
+        'hideSearch' => true,
     ]) ?>
 
     <?= $form->field($model, 'key')->textInput([

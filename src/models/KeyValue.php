@@ -3,15 +3,16 @@
 namespace kvmanager\models;
 
 use common\models\User;
-use kvmanager\NacosApiException;
 use kvmanager\behaviors\NacosBehavior;
 use kvmanager\components\NacosComponent;
 use kvmanager\KVException;
+use kvmanager\NacosApiException;
 use xlerr\CodeEditor\CodeEditor;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\BlameableBehavior;
 use yii\helpers\ArrayHelper;
+use yii\web\ForbiddenHttpException;
 
 /**
  * This is the model class for table "key_value".
@@ -95,6 +96,20 @@ class KeyValue extends BaseModel
     public static function tableName()
     {
         return ArrayHelper::getValue(Yii::$app->params, 'kvmanager.tableName', '{{%key_value}}');
+    }
+
+    /**
+     * @param $namespace
+     * @param $group
+     *
+     * @return bool
+     * @throws ForbiddenHttpException
+     */
+    public static function permissionCheck($namespace, $group)
+    {
+        $config = self::getAvailable();
+
+        return $namespace && $group && isset($config[$namespace]) && in_array($group, $config[$namespace], true);
     }
 
     /**

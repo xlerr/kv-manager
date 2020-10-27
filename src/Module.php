@@ -2,7 +2,6 @@
 
 namespace kvmanager;
 
-use kvmanager\models\KeyValue;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\i18n\PhpMessageSource;
@@ -24,29 +23,8 @@ class Module extends \yii\base\Module implements BootstrapInterface
         $app->getUrlManager()->addRules([
             [
                 'class'   => UrlRule::class,
-                'route'   => $this->id . '/key-value/index',
-                'pattern' => vsprintf('%s/<%s:[\w\-]+>/<%s:[\w\-]+>', [
-                    $this->id,
-                    KeyValue::$namespaceFieldName,
-                    KeyValue::$groupFieldName,
-                ]),
-            ],
-            [
-                'class'   => UrlRule::class,
                 'route'   => $this->id . '/key-value/<action>',
-                'pattern' => vsprintf('%s/<%s:[\w\-]+>/<%s:[\w\-]+>/<action:(%s)>', [
-                    $this->id,
-                    KeyValue::$namespaceFieldName,
-                    KeyValue::$groupFieldName,
-                    implode('|', [
-                        'create',
-                        'update',
-                        'delete',
-                        'view',
-                        'sync',
-                        'clean-cache',
-                    ]),
-                ]),
+                'pattern' => $this->id . '/<action:[\w\-]+>',
             ],
         ], false);
     }

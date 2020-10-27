@@ -38,9 +38,14 @@ abstract class BaseModel extends ActiveRecord
      */
     public static $valueFieldName;
 
-    const TAKE_FORMAT_ARRAY  = 'array';
+    /**
+     * @var array
+     */
+    protected static $available;
+
+    const TAKE_FORMAT_ARRAY = 'array';
     const TAKE_FORMAT_OBJECT = 'object';
-    const TAKE_FORMAT_RAW    = 'raw';
+    const TAKE_FORMAT_RAW = 'raw';
 
     public function transactions()
     {
@@ -54,6 +59,22 @@ abstract class BaseModel extends ActiveRecord
         return [
             CacheBehavior::class,
         ];
+    }
+
+    /**
+     * @param array $config
+     */
+    public static function setAvailable(array $config)
+    {
+        self::$available = array_replace_recursive((array)self::$available, $config);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAvailable()
+    {
+        return self::$available;
     }
 
     /**

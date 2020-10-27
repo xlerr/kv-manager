@@ -1,5 +1,6 @@
 <?php
 
+use kvmanager\components\NacosComponent;
 use kvmanager\models\KeyValue;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
@@ -14,8 +15,6 @@ use yii\web\View;
 $this->title = Yii::t('kvmanager', 'Key Value');
 
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['breadcrumbs'][] = $searchModel->namespace;
-$this->params['breadcrumbs'][] = $searchModel->group;
 
 echo $this->render('_search', [
     'model' => $searchModel,
@@ -46,28 +45,13 @@ echo GridView::widget([
             ],
             'buttons'        => [
                 'view'   => function ($url, KeyValue $model) {
-                    return Html::a(Yii::t('kvmanager', 'View'), [
-                        'view',
-                        'namespace' => $model->namespace,
-                        'group'     => $model->group,
-                        'id'        => $model->id,
-                    ]);
+                    return Html::a(Yii::t('kvmanager', 'View'), $url);
                 },
                 'update' => function ($url, KeyValue $model) {
-                    return Html::a(Yii::t('kvmanager', 'Update'), [
-                        'update',
-                        'namespace' => $model->namespace,
-                        'group'     => $model->group,
-                        'id'        => $model->id,
-                    ]);
+                    return Html::a(Yii::t('kvmanager', 'Update'), $url);
                 },
                 'delete' => function ($url, KeyValue $model) {
-                    return Html::a(Yii::t('kvmanager', 'Delete'), [
-                        'delete',
-                        'namespace' => $model->namespace,
-                        'group'     => $model->group,
-                        'id'        => $model->id,
-                    ], [
+                    return Html::a(Yii::t('kvmanager', 'Delete'), $url, [
                         'data' => [
                             'method'  => 'post',
                             'confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
@@ -81,7 +65,16 @@ echo GridView::widget([
             'attribute' => 'type',
             'format'    => ['in', KeyValue::typeList()],
         ],
-        'namespace',
+        [
+            'attribute' => 'namespace',
+            'value'     => function (KeyValue $model) {
+                $config = KeyValue::take(NacosComponent::CONFIG_KEY);
+
+                $config = (array)($config['namespace'] ?? []);
+
+                return ($config[$model->namespace]['label'] ?? $model->namespace) . ' (' . $model->namespace . ')';
+            },
+        ],
         'group',
         [
             'attribute' => 'value',

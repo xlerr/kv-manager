@@ -1,26 +1,20 @@
 <?php
 
-use kartik\widgets\ActiveForm;
+use kartik\widgets\DepDrop;
 use kvmanager\models\KeyValue;
+use xlerr\common\widgets\ActiveForm;
 use xlerr\common\widgets\Select2;
 use yii\helpers\Html;
-use yii\web\JsExpression;
+use yii\helpers\Url;
 use yii\web\View;
 
 /** @var $this View */
 /** @var $model KeyValue */
 
-$groupList = (array)KeyValue::find()
-    ->where([
-        KeyValue::$namespaceFieldName => $model->{KeyValue::$namespaceFieldName},
-    ])
-    ->select(KeyValue::$groupFieldName)
-    ->distinct()
-    ->column();
 
-if (!array_search($model->group, $groupList)) {
-    $groupList[] = $model->group;
-}
+$available = array_keys(KeyValue::getAvailable());
+$available = array_combine($available, $available);
+
 ?>
 
 <div class="box box-default search">
@@ -33,23 +27,45 @@ if (!array_search($model->group, $groupList)) {
     </div>
     <div class="box-body">
         <?php $form = ActiveForm::begin([
-            'action' => [
-                'index',
-                'namespace' => $model->namespace,
-                'group'     => $model->group,
-            ],
+            'action' => [''],
             'method' => 'get',
             'type'   => ActiveForm::TYPE_INLINE,
         ]); ?>
 
-        <?= $form->field($model, 'group')->widget(Select2::class, [
-            'data'         => array_combine($groupList, $groupList),
-            'hideSearch'   => true,
-            'pluginEvents' => [
-                'change' => new JsExpression('switchGroup'),
+        <?= $form->field($model, 'namespace', [
+            'options' => [
+                'class' => 'form-group',
+                'style' => 'min-width: 120px',
             ],
-            'options'      => [
-                'name' => '_',
+        ])->widget(Select2::class, [
+            'data'       => $available,
+            'hideSearch' => true,
+            'options'    => [
+                'id' => 'namespace-input',
+            ],
+        ]) ?>
+
+        <?= $form->field($model, 'group', [
+            'options' => [
+                'class' => 'form-group',
+                'style' => 'min-width: 120px',
+            ],
+        ])->widget(DepDrop::className(), [
+            'type'           => DepDrop::TYPE_SELECT2,
+            'select2Options' => [
+                'theme'      => 'default',
+                'hideSearch' => true,
+            ],
+            'options'        => [
+                'placeholder' => '请选择...',
+            ],
+            'pluginOptions'  => [
+                'depends'     => ['namespace-input'],
+                'initDepends' => ['namespace-input'],
+                'initialize'  => true,
+                'params'      => [],
+                'placeholder' => '请选择...',
+                'url'         => Url::to(['group-list', 'default' => $model->group]),
             ],
         ]) ?>
 
@@ -61,11 +77,7 @@ if (!array_search($model->group, $groupList)) {
 
         <?= Html::submitButton(Yii::t('kvmanager', 'Search'), ['class' => 'btn btn-primary']) ?>
 
-        <?= Html::a(Yii::t('kvmanager', 'Reset'), [
-            'index',
-            'namespace' => $model->namespace,
-            'group'     => $model->group,
-        ], ['class' => 'btn btn-default']); ?>
+        <?= Html::a(Yii::t('kvmanager', 'Reset'), [''], ['class' => 'btn btn-default']); ?>
 
         <?= Html::a(Yii::t('kvmanager', 'Create'), [
             'create',
@@ -76,11 +88,3 @@ if (!array_search($model->group, $groupList)) {
         <?php ActiveForm::end(); ?>
     </div>
 </div>
-<script>
-    <?php $this->beginBlock('switchGroup') ?>
-    function switchGroup(e) {
-        window.location.pathname = window.location.pathname.toString().replace(/\/[\w\-]+$/, '/' + $(e.currentTarget).val());
-    }
-    <?php $this->endBlock() ?>
-    <?php $this->registerJs($this->blocks['switchGroup']) ?>
-</script>

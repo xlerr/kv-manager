@@ -15,8 +15,6 @@ $this->params['breadcrumbs'][] = [
     'label' => Yii::t('kvmanager', 'Key Value'),
     'url'   => [
         'index',
-        'namespace' => $model->namespace,
-        'group'     => $model->group,
     ],
 ];
 $this->params['breadcrumbs'][] = $model->namespace;
@@ -27,15 +25,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <p>
     <?= Html::a(Yii::t('kvmanager', 'Clean Cache'), [
         'clean-cache',
-        'namespace' => $model->namespace,
-        'group'     => $model->group,
-        'id'        => $model->id,
+        'id' => $model->id,
     ], ['class' => 'btn btn-warning']) ?>
     <?= Html::a(Yii::t('kvmanager', 'Sync'), [
         'sync',
-        'namespace' => $model->namespace,
-        'group'     => $model->group,
-        'id'        => $model->id,
+        'id' => $model->id,
     ], [
         'class' => 'btn btn-facebook',
         'data'  => [
@@ -44,15 +38,11 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
     <?= Html::a(Yii::t('yii', 'Update'), [
         'update',
-        'namespace' => $model->namespace,
-        'group'     => $model->group,
-        'id'        => $model->id,
+        'id' => $model->id,
     ], ['class' => 'btn btn-primary']) ?>
     <?= Html::a(Yii::t('yii', 'Delete'), [
         'delete',
-        'namespace' => $model->namespace,
-        'group'     => $model->group,
-        'id'        => $model->id,
+        'id' => $model->id,
     ], [
         'class' => 'btn btn-danger',
         'data'  => [

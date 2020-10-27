@@ -3,6 +3,7 @@
 namespace kvmanager\models;
 
 use yii\data\ActiveDataProvider;
+use yii\web\ForbiddenHttpException;
 
 /**
  * KeyValueSearch represents the model behind the search form about `KeyValue`.
@@ -14,11 +15,25 @@ class KeyValueSearch extends KeyValue
      */
     public function rules()
     {
+        $config = KeyValue::getAvailable();
+
         return [
+            [[self::$namespaceFieldName], 'default', 'value' => array_key_first($config)],
+            [[self::$groupFieldName], 'default', 'value' => current((array)current($config))],
+            [[self::$namespaceFieldName, self::$groupFieldName], 'required'],
+            [
+                [self::$groupFieldName],
+                'filter',
+                'filter' => function ($gp) {
+                    if (!self::permissionCheck($this->{self::$namespaceFieldName}, $gp)) {
+                        throw new ForbiddenHttpException(' 权限错误');
+                    }
+
+                    return $gp;
+                },
+            ],
             [
                 [
-                    self::$namespaceFieldName,
-                    self::$groupFieldName,
                     self::$keyFieldName,
                     'value',
                     'memo',
@@ -62,7 +77,8 @@ class KeyValueSearch extends KeyValue
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
+
             return $dataProvider;
         }
 

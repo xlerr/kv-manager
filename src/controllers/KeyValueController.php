@@ -2,15 +2,18 @@
 
 namespace kvmanager\controllers;
 
-use kvmanager\NacosApiException;
+use common\helpers\UserHelper;
+use kartik\depdrop\DepDropAction;
 use kvmanager\models\KeyValue;
 use kvmanager\models\KeyValueSearch;
+use kvmanager\NacosApiException;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -19,6 +22,13 @@ use yii\web\Response;
  */
 class KeyValueController extends Controller
 {
+    public function init()
+    {
+        if (!Yii::$app->user->can('kvmanager')) {
+            throw new ForbiddenHttpException('权限错误');
+        }
+    }
+
     public function behaviors()
     {
         return [
@@ -32,19 +42,47 @@ class KeyValueController extends Controller
         ];
     }
 
+    public function actions()
+    {
+        return [
+            'group-list' => [
+                'class'            => DepDropAction::className(),
+                'outputCallback'   => function ($namespace) {
+                    $config = KeyValue::getAvailable();
+                    $group  = $config[$namespace];
+
+                    $data = [];
+                    foreach ($group as $gp) {
+                        $data[] = [
+                            'id'   => $gp,
+                            'name' => $gp,
+                        ];
+                    }
+
+                    return $data;
+                },
+                'selectedCallback' => function ($namespace) {
+                    $config = KeyValue::getAvailable();
+                    $group  = $config[$namespace];
+
+                    $defaultSelect = Yii::$app->request->get('default');
+
+                    if (in_array($defaultSelect, $group)) {
+                        return $defaultSelect;
+                    } else {
+                        return current($group);
+                    }
+                },
+            ],
+        ];
+    }
+
     /**
      * @return string
      */
     public function actionIndex()
     {
         $request = Yii::$app->getRequest();
-        if (empty($request->get(KeyValue::$namespaceFieldName)) || empty($request->get(KeyValue::$groupFieldName))) {
-            return $this->redirect([
-                'index',
-                KeyValue::$namespaceFieldName => KeyValue::getDefaultNamespace(),
-                KeyValue::$groupFieldName     => KeyValue::getDefaultGroup(),
-            ]);
-        }
 
         $searchModel  = new KeyValueSearch();
         $dataProvider = $searchModel->search($request->queryParams);
@@ -90,19 +128,26 @@ class KeyValueController extends Controller
      */
     public function actionCreate()
     {
-        $model = new KeyValue();
+        $request = Yii::$app->getRequest();
+        $model   = new KeyValue();
 
-        $model->namespace = Yii::$app->getRequest()->get('namespace');
-        $model->group     = Yii::$app->getRequest()->get('group');
+        $model->namespace = $request->get('namespace');
+        $model->group     = $request->get('group');
         $model->type      = 'json';
 
         if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return $this->redirect([
-                    'index',
-                    'namespace' => $model->namespace,
-                    'group'     => $model->group,
-                ]);
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                if (!KeyValue::permissionCheck($model->namespace, $model->group)) {
+                    throw new ForbiddenHttpException('权限错误');
+                }
+
+                if ($model->insert(false)) {
+                    return $this->redirect([
+                        'index',
+                        'namespace' => $model->namespace,
+                        'group'     => $model->group,
+                    ]);
+                }
             }
         }
 
@@ -144,11 +189,13 @@ class KeyValueController extends Controller
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
+        $model     = $this->findModel($id);
+        $namespace = $model->namespace;
+        $group     = $model->group;
 
         $model->delete();
 
-        return $this->redirect(Yii::$app->getRequest()->getReferrer());
+        return $this->redirect(['index', 'namespace' => $namespace, 'group' => $group]);
     }
 
     /**
@@ -173,10 +220,14 @@ class KeyValueController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = KeyValue::findOne($id)) !== null) {
-            return $model;
-        } else {
+        if (($model = KeyValue::findOne($id)) === null) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        if (!KeyValue::permissionCheck($model->namespace, $model->group)) {
+            throw new ForbiddenHttpException('权限错误');
+        }
+
+        return $model;
     }
 }
