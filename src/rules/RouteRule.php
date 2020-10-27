@@ -1,6 +1,6 @@
 <?php
 
-namespace xlerr\kvmanager\rules;
+namespace kvmanager\rules;
 
 use kvmanager\components\NacosComponent;
 use kvmanager\models\KeyValue;
