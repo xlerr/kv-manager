@@ -11,10 +11,6 @@ use yii\web\View;
 /** @var $this View */
 /** @var $model KeyValue */
 
-
-$available = array_keys(KeyValue::getAvailable());
-$available = array_combine($available, $available);
-
 ?>
 
 <div class="box box-default search">
@@ -38,7 +34,7 @@ $available = array_combine($available, $available);
                 'style' => 'min-width: 120px',
             ],
         ])->widget(Select2::class, [
-            'data'       => $available,
+            'data'       => array_intersect_key(KeyValue::getNamespaceList(), KeyValue::getAvailable()),
             'hideSearch' => true,
             'options'    => [
                 'id' => 'namespace-input',
@@ -72,8 +68,6 @@ $available = array_combine($available, $available);
         <?= $form->field($model, 'key') ?>
 
         <?= $form->field($model, 'value') ?>
-
-        <?= $form->field($model, 'memo') ?>
 
         <?= Html::submitButton(Yii::t('kvmanager', 'Search'), ['class' => 'btn btn-primary']) ?>
 

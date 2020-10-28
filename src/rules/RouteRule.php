@@ -2,7 +2,6 @@
 
 namespace kvmanager\rules;
 
-use kvmanager\components\NacosComponent;
 use kvmanager\models\KeyValue;
 use yii\rbac\Rule;
 
@@ -25,9 +24,7 @@ class RouteRule extends Rule
     {
         $config = KeyValue::getAvailable();
         if (!is_array($config)) {
-            $config = KeyValue::take(NacosComponent::CONFIG_KEY);
-
-            $config = (array)($config['namespace'] ?? []);
+            $config = KeyValue::getNamespaceConfig();
 
             foreach ($config as $namespace => &$option) {
                 if (!isset($item->data[$namespace])) {

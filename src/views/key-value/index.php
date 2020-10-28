@@ -1,6 +1,5 @@
 <?php
 
-use kvmanager\components\NacosComponent;
 use kvmanager\models\KeyValue;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
@@ -36,14 +35,9 @@ echo GridView::widget([
     'dataProvider' => $dataProvider,
     'columns'      => [
         [
-            'class'          => 'yii\grid\ActionColumn',
-            'template'       => '{view} {update} {delete}',
-            'visibleButtons' => [
-                'sync' => function (KeyValue $model) {
-                    return Yii::$app->getUser()->can('KV_SYNC');
-                },
-            ],
-            'buttons'        => [
+            'class'    => 'yii\grid\ActionColumn',
+            'template' => '{view} {update} {delete}',
+            'buttons'  => [
                 'view'   => function ($url, KeyValue $model) {
                     return Html::a(Yii::t('kvmanager', 'View'), $url);
                 },
@@ -62,33 +56,39 @@ echo GridView::widget([
         ],
         'key',
         [
-            'attribute' => 'type',
-            'format'    => ['in', KeyValue::typeList()],
-        ],
-        [
             'attribute' => 'namespace',
             'value'     => function (KeyValue $model) {
-                $config = KeyValue::take(NacosComponent::CONFIG_KEY);
-
-                $config = (array)($config['namespace'] ?? []);
+                $config = KeyValue::getNamespaceConfig();
 
                 return ($config[$model->namespace]['label'] ?? $model->namespace) . ' (' . $model->namespace . ')';
             },
         ],
         'group',
         [
+            'attribute' => 'type',
+            'format'    => ['in', KeyValue::typeList()],
+        ],
+        [
             'attribute' => 'value',
             'format'    => 'raw',
             'value'     => function (KeyValue $model) {
                 $content = preg_replace('/\s+/', '', $model->value);
-                $content = htmlentities(StringHelper::truncate($content, 30));
+                $content = htmlentities(StringHelper::truncate($content, 50));
 
                 return Html::tag('span', $content, [
                     'title' => $model->value,
                 ]);
             },
         ],
-        'memo:ntext',
+        [
+            'attribute' => 'memo',
+            'format'    => 'raw',
+            'value'     => function (KeyValue $model) {
+                return Html::tag('span', StringHelper::truncate($model->memo, 30), [
+                    'title' => $model->memo,
+                ]);
+            },
+        ],
         [
             'label'     => '修改者',
             'attribute' => 'operator.username',

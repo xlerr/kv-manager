@@ -3,6 +3,7 @@
 namespace kvmanager\models;
 
 use kvmanager\behaviors\CacheBehavior;
+use kvmanager\components\NacosComponent;
 use kvmanager\KVException;
 use kvmanager\parser\Parser;
 use stdClass;
@@ -75,6 +76,31 @@ abstract class BaseModel extends ActiveRecord
     public static function getAvailable()
     {
         return self::$available;
+    }
+
+    /**
+     * @return array
+     * @throws KVException
+     */
+    public static function getNamespaceConfig()
+    {
+        $config = KeyValue::take(NacosComponent::CONFIG_KEY);
+
+        return (array)($config['namespace'] ?? []);
+    }
+
+    /**
+     * @return array
+     * @throws KVException
+     */
+    public static function getNamespaceList()
+    {
+        $config = self::getNamespaceConfig();
+        foreach ($config as $ns => &$options) {
+            $options = $options['label'] ?? $ns;
+        }
+
+        return $config;
     }
 
     /**
