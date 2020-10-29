@@ -30,7 +30,7 @@ if ($model->type === 'json') {
 
 <div class="box-body">
     <?= $form->field($model, 'namespace')->widget(Select2::class, [
-        'disabled'   => !$model->isNewRecord,
+//        'disabled'   => !$model->isNewRecord,
         'data'       => array_intersect_key(KeyValue::getNamespaceList(), KeyValue::getAvailable()),
         'hideSearch' => true,
         'options'    => [
@@ -39,7 +39,7 @@ if ($model->type === 'json') {
     ]) ?>
 
     <?= $form->field($model, 'group')->widget(DepDrop::className(), [
-        'disabled'       => !$model->isNewRecord,
+//        'disabled'       => !$model->isNewRecord,
         'type'           => DepDrop::TYPE_SELECT2,
         'select2Options' => [
             'theme'      => 'default',
@@ -60,7 +60,7 @@ if ($model->type === 'json') {
 
     <?= $form->field($model, 'key')->textInput([
         'maxlength' => true,
-        'disabled'  => !$model->isNewRecord,
+//        'disabled'  => !$model->isNewRecord,
     ]) ?>
 
     <?= $form->field($model, 'type')->widget(Select2::class, [

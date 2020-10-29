@@ -4,6 +4,7 @@ namespace kvmanager\controllers;
 
 use common\helpers\UserHelper;
 use kartik\depdrop\DepDropAction;
+use kvmanager\components\NacosComponent;
 use kvmanager\models\KeyValue;
 use kvmanager\models\KeyValueSearch;
 use kvmanager\NacosApiException;
@@ -36,7 +37,8 @@ class KeyValueController extends Controller
                 'class'   => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
-                    'sync'   => ['POST'],
+                    'pull'   => ['POST'],
+                    'push'   => ['POST'],
                 ],
             ],
         ];
@@ -101,11 +103,25 @@ class KeyValueController extends Controller
      * @throws NacosApiException
      * @throws InvalidConfigException
      */
-    public function actionSync($id)
+    public function actionPull($id)
     {
         $model = $this->findModel($id);
         $model->pullConfig();
-        Yii::$app->getSession()->setFlash('success', '同步成功!');
+        Yii::$app->getSession()->setFlash('success', '操作成功!');
+
+        return $this->redirect(Yii::$app->getRequest()->getReferrer());
+    }
+
+    public function actionPush($id)
+    {
+        $model = $this->findModel($id);
+
+        $instance = NacosComponent::instance();
+        if (!$instance->releaseConfig($model)) {
+            throw new NacosApiException($instance->getError());
+        }
+
+        Yii::$app->getSession()->setFlash('success', '操作成功!');
 
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
     }

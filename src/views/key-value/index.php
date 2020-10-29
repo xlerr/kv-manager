@@ -35,24 +35,7 @@ echo GridView::widget([
     'dataProvider' => $dataProvider,
     'columns'      => [
         [
-            'class'    => 'yii\grid\ActionColumn',
-            'template' => '{view} {update} {delete}',
-            'buttons'  => [
-                'view'   => function ($url, KeyValue $model) {
-                    return Html::a(Yii::t('kvmanager', 'View'), $url);
-                },
-                'update' => function ($url, KeyValue $model) {
-                    return Html::a(Yii::t('kvmanager', 'Update'), $url);
-                },
-                'delete' => function ($url, KeyValue $model) {
-                    return Html::a(Yii::t('kvmanager', 'Delete'), $url, [
-                        'data' => [
-                            'method'  => 'post',
-                            'confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
-                        ],
-                    ]);
-                },
-            ],
+            'class' => 'yii\grid\ActionColumn',
         ],
         'key',
         [

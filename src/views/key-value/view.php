@@ -27,8 +27,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'clean-cache',
         'id' => $model->id,
     ], ['class' => 'btn btn-warning']) ?>
-    <?= Html::a(Yii::t('kvmanager', 'Sync'), [
-        'sync',
+    <?= Html::a(Yii::t('kvmanager', 'Pull'), [
+        'pull',
+        'id' => $model->id,
+    ], [
+        'class' => 'btn btn-facebook',
+        'data'  => [
+            'method' => 'post',
+        ],
+    ]) ?>
+    <?= Html::a(Yii::t('kvmanager', 'Push'), [
+        'push',
         'id' => $model->id,
     ], [
         'class' => 'btn btn-facebook',
