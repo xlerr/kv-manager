@@ -13,10 +13,6 @@ use yii\web\View;
 /* @var $this View */
 /* @var $model KeyValue */
 
-if ($model->type === 'json') {
-    $model->value = json_encode(json_decode($model->value), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-}
-
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -103,7 +99,7 @@ if ($model->type === 'json') {
     const mapping = <?= json_encode(KeyValue::getEditorModes()) ?>,
         valueId = '<?= Html::getInputId($model, 'value') ?>',
         editor = aceInstance[valueId];
-        
+
     $('#' + valueId).parent().append('<p><code>Ctrl+Shift+F</code>或<code>Command+Shift+F</code>可以格式化<code>JSON</code>类型值.</p>')
 
     editor.commands.addCommand({
