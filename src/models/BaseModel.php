@@ -2,6 +2,7 @@
 
 namespace kvmanager\models;
 
+use Carbon\Carbon;
 use kvmanager\behaviors\CacheBehavior;
 use kvmanager\components\NacosComponent;
 use kvmanager\KVException;
@@ -188,6 +189,14 @@ abstract class BaseModel extends ActiveRecord
                 ])
                 ->asArray()
                 ->one();
+
+            static::updateAll([
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ], [
+                static::$namespaceFieldName => $namespace,
+                static::$groupFieldName     => $group,
+                static::$keyFieldName       => $key,
+            ]);
 
             if (null === $config) {
                 throw new KVException(vsprintf('%s.%s.%s not found in \\%s', [
