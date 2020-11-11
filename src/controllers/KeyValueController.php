@@ -25,9 +25,23 @@ class KeyValueController extends Controller
 {
     public function init()
     {
-        if (!Yii::$app->user->can('kvmanager')) {
-            throw new ForbiddenHttpException('权限错误');
+        $user = Yii::$app->user;
+        $all  = false;
+        if ($user->can('kvmanager')) {
+            $all = true;
         }
+
+        $data   = [];
+        $config = KeyValue::getNamespaceConfig();
+        foreach ($config as $namespace => $options) {
+            foreach ($options['group'] ?? [] as $group) {
+                if ($all || $user->can(strtolower($namespace . '_' . $group))) {
+                    $data[$namespace][] = $group;
+                }
+            }
+        }
+
+        KeyValue::setAvailable($data);
     }
 
     public function behaviors()
