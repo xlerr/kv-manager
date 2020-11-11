@@ -209,7 +209,7 @@ abstract class BaseModel extends ActiveRecord
             $cache->set($cacheKey, $config, 86400);
         }
         
-        Yii::warning($cacheKey,'kvused');
+        Yii::info($cacheKey,'kvused');
 
         return Parser::create($config['type'], $format)->parse($config['value']);
     }
