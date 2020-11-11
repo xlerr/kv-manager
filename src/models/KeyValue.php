@@ -43,6 +43,8 @@ class KeyValue extends BaseModel
     public static $typeFieldName = 'type';
     public static $valueFieldName = 'value';
 
+    public $operate_info;
+
     public function behaviors()
     {
         return array_merge(parent::behaviors(), [
@@ -125,6 +127,7 @@ class KeyValue extends BaseModel
             [[self::$keyFieldName], 'string', 'max' => 100],
             [[self::$namespaceFieldName, self::$groupFieldName], 'string', 'max' => 64],
             [[self::$valueFieldName], 'string', 'max' => 20000],
+            [['operate_info'], 'required'],
             [
                 [
                     'memo',
@@ -164,6 +167,7 @@ class KeyValue extends BaseModel
             'updated_at'              => Yii::t('kvmanager', 'Updated At'),
             'updated_by'              => Yii::t('kvmanager', 'Updated By'),
             'created_by'              => Yii::t('kvmanager', 'Created By'),
+            'operate_info'            => '操作描述',
         ];
     }
 

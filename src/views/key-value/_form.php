@@ -80,6 +80,8 @@ use yii\web\View;
             'maxLines' => 40,
         ],
     ]) ?>
+    
+    <?= $form->field($model, 'operate_info') ?>
 
 </div>
 
