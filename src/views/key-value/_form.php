@@ -25,62 +25,71 @@ use yii\web\View;
 ]); ?>
 
 <div class="box-body">
-    <?= $form->field($model, 'namespace')->widget(Select2::class, [
-//        'disabled'   => !$model->isNewRecord,
-        'data'       => array_intersect_key(KeyValue::getNamespaceList(), KeyValue::getAvailable()),
-        'hideSearch' => true,
-        'options'    => [
-            'id' => 'namespace-input',
-        ],
-    ]) ?>
-
-    <?= $form->field($model, 'group')->widget(DepDrop::className(), [
-//        'disabled'       => !$model->isNewRecord,
-        'type'           => DepDrop::TYPE_SELECT2,
-        'select2Options' => [
-            'theme'      => 'default',
-            'hideSearch' => true,
-        ],
-        'options'        => [
-            'placeholder' => '请选择...',
-        ],
-        'pluginOptions'  => [
-            'depends'     => ['namespace-input'],
-            'initDepends' => ['namespace-input'],
-            'initialize'  => true,
-            'params'      => [],
-            'placeholder' => '请选择...',
-            'url'         => Url::to(['group-list', 'default' => $model->group]),
-        ],
-    ]) ?>
-
-    <?= $form->field($model, 'key')->textInput([
-        'maxlength' => true,
-//        'disabled'  => !$model->isNewRecord,
-    ]) ?>
-
-    <?= $form->field($model, 'type')->widget(Select2::class, [
-        'data'         => KeyValue::typeList(),
-        'hideSearch'   => true,
-        'pluginEvents' => [
-            'change' => new JsExpression('typeChange'),
-        ],
-    ]) ?>
+    <div class="row">
+        <div class="col-md-3">
+            <?= $form->field($model, 'namespace')->widget(Select2::class, [
+                'disabled'   => !$model->isNewRecord,
+                'data'       => array_intersect_key(KeyValue::getNamespaceList(), KeyValue::getAvailable()),
+                'hideSearch' => true,
+                'options'    => [
+                    'id' => 'namespace-input',
+                ],
+            ]) ?>
+        </div>
+        <div class="col-md-3">
+            <?= $form->field($model, 'group')->widget(DepDrop::className(), [
+                'disabled'       => !$model->isNewRecord,
+                'type'           => DepDrop::TYPE_SELECT2,
+                'select2Options' => [
+                    'theme'      => 'default',
+                    'hideSearch' => true,
+                ],
+                'options'        => [
+                    'placeholder' => '请选择...',
+                ],
+                'pluginOptions'  => [
+                    'depends'     => ['namespace-input'],
+                    'initDepends' => ['namespace-input'],
+                    'initialize'  => true,
+                    'params'      => [],
+                    'placeholder' => '请选择...',
+                    'url'         => Url::to(['group-list', 'default' => $model->group]),
+                ],
+            ]) ?>
+        </div>
+        <div class="col-md-4">
+            <?= $form->field($model, 'key')->textInput([
+                'maxlength' => true,
+                'disabled'  => !$model->isNewRecord,
+            ]) ?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($model, 'type')->widget(Select2::class, [
+                'data'         => KeyValue::typeList(),
+                'hideSearch'   => true,
+                'pluginEvents' => [
+                    'change' => new JsExpression('typeChange'),
+                ],
+            ]) ?>
+        </div>
+    </div>
 
     <?= $form->field($model, 'value')->widget(CodeEditor::class, [
         'clientOptions' => [
             'mode'     => $model->getEditorMode(),
-            'maxLines' => 40,
+            'minLines' => 20,
+            'maxLines' => 50,
         ],
     ]) ?>
 
     <?= $form->field($model, 'memo')->widget(CodeEditor::class, [
         'clientOptions' => [
             'mode'     => CodeEditor::MODE_Tex,
-            'maxLines' => 40,
+            'minLines' => 3,
+            'maxLines' => 10,
         ],
     ]) ?>
-    
+
     <?= $form->field($model, 'operate_info') ?>
 
 </div>
