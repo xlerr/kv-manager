@@ -126,7 +126,7 @@ class KeyValue extends BaseModel
             [[self::$typeFieldName], 'in', 'range' => array_keys(self::typeList())],
             [[self::$keyFieldName], 'string', 'max' => 100],
             [[self::$namespaceFieldName, self::$groupFieldName], 'string', 'max' => 64],
-            [[self::$valueFieldName], 'string', 'max' => 20000],
+            [[self::$valueFieldName], 'string'],
             [['operate_info'], 'required'],
             [
                 [
