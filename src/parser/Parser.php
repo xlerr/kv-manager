@@ -28,7 +28,7 @@ abstract class Parser
         $parserName = sprintf('%s2%s', $source, $format);
 
         if (!isset(self::$parser[$parserName])) {
-            throw new KVException(sprintf('`%s`类型配置不能解析为`%s`格式', $sourceType, $format));
+            throw new KVException(sprintf('`%s`类型配置不能解析为`%s`格式', $source, $format));
         }
 
         return new self::$parser[$parserName]();
