@@ -25,6 +25,7 @@ class KeyValueController extends Controller
 {
     public function init()
     {
+        parent::init();
         $user = Yii::$app->user;
         $all  = false;
         if ($user->can('kvmanager')) {
