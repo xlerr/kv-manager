@@ -1,6 +1,6 @@
 {
   "name": "xlerr/kvmanager",
-  "type": "library",
+  "type": "yii2-extension",
   "authors": [
     {
       "name": "xlerr",
