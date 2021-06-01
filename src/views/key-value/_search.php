@@ -15,17 +15,18 @@ use yii\web\View;
 
 <div class="box box-default search">
     <div class="box-header with-border">
-        <i class="fa fa-search"></i>
-        <h3 class="box-title"><?= Yii::t('kvmanager', 'Search') ?></h3>
+        <div class="box-title"><?= Yii::t('kvmanager', 'Search') ?></div>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
         </div>
     </div>
     <div class="box-body">
-        <?php $form = ActiveForm::begin([
-            'action' => [''],
-            'method' => 'get',
-            'type'   => ActiveForm::TYPE_INLINE,
+        <?php
+        $form = ActiveForm::begin([
+            'action'        => [''],
+            'method'        => 'get',
+            'type'          => ActiveForm::TYPE_INLINE,
+            'waitingPrompt' => ActiveForm::WAITING_PROMPT_SEARCH,
         ]); ?>
 
         <?= $form->field($model, 'namespace', [
@@ -79,6 +80,7 @@ use yii\web\View;
             'group'     => $model->group,
         ], ['class' => 'btn btn-success']) ?>
 
-        <?php ActiveForm::end(); ?>
+        <?php
+        ActiveForm::end(); ?>
     </div>
 </div>

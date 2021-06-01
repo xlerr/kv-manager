@@ -1,8 +1,8 @@
 <?php
 
 use kvmanager\models\KeyValue;
+use xlerr\common\widgets\GridView;
 use yii\data\ActiveDataProvider;
-use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\StringHelper;
 use yii\web\View;
@@ -20,18 +20,6 @@ echo $this->render('_search', [
 ]);
 
 echo GridView::widget([
-    'tableOptions' => [
-        'class' => 'table table-hover',
-    ],
-    'options'      => [
-        'class' => 'box box-primary',
-    ],
-    'pager'        => [
-        'options' => [
-            'class' => 'pagination pagination-sm no-margin pull-right',
-        ],
-    ],
-    'layout'       => '<div class="box-header with-border">{summary}</div><div class="box-body table-responsive no-padding">{items}</div><div class="box-footer">{pager}</div>',
     'dataProvider' => $dataProvider,
     'columns'      => [
         [
